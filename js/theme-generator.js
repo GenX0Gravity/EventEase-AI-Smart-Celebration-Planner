@@ -208,7 +208,7 @@ function loadThemeGeneratorPage() {
   const event = Storage.getCurrentEvent();
   if (event) {
     const eventTypeEl = document.getElementById('themeEventType');
-    if (eventTypeEl) {
+    if (eventTypeEl && eventTypeEl.options) {
       const opts = Array.from(eventTypeEl.options);
       const match = opts.find((o) => o.value === event.type);
       if (match) eventTypeEl.value = event.type;

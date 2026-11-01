@@ -71,6 +71,7 @@ const Analytics = {
   },
 
   renderSpendingChart(ev) {
+    if (typeof Chart === 'undefined') return;
     const canvas = document.getElementById('reportSpendingChart');
     if (!canvas) return;
 
@@ -117,6 +118,7 @@ const Analytics = {
   },
 
   renderGuestRsvpChart(ev) {
+    if (typeof Chart === 'undefined') return;
     const canvas = document.getElementById('reportGuestChart');
     if (!canvas) return;
 

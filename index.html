@@ -42,53 +42,53 @@
 
     <!-- Navigation Links -->
     <ul class="nav-links">
-      <li><a href="#" class="nav-link active" data-page="dashboard">
+      <li><a href="#dashboard" class="nav-link active" data-page="dashboard" onclick="navigateTo('dashboard')">
         <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="create-event">
+      <li><a href="#create-event" class="nav-link" data-page="create-event" onclick="navigateTo('create-event')">
         <i data-lucide="calendar-plus"></i><span>Event Wizard</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="copilot">
+      <li><a href="#copilot" class="nav-link" data-page="copilot" onclick="navigateTo('copilot')">
         <i data-lucide="sparkles"></i><span>EventEase Copilot</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="ai-planner">
+      <li><a href="#ai-planner" class="nav-link" data-page="ai-planner" onclick="navigateTo('ai-planner')">
         <i data-lucide="brain-circuit"></i><span>AI Event Plan</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="budget">
-        <i data-lucide="wallet"></i><span>Budget & Expenses</span>
+      <li><a href="#budget" class="nav-link" data-page="budget" onclick="navigateTo('budget')">
+        <i data-lucide="wallet"></i><span>Budget &amp; Expenses</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="guests">
-        <i data-lucide="users"></i><span>Guests & Seating</span>
+      <li><a href="#guests" class="nav-link" data-page="guests" onclick="navigateTo('guests')">
+        <i data-lucide="users"></i><span>Guests &amp; Seating</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="vendors">
+      <li><a href="#vendors" class="nav-link" data-page="vendors" onclick="navigateTo('vendors')">
         <i data-lucide="briefcase"></i><span>Vendor Directory</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="timeline">
+      <li><a href="#timeline" class="nav-link" data-page="timeline" onclick="navigateTo('timeline')">
         <i data-lucide="clock"></i><span>Event Timeline</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="checklist">
+      <li><a href="#checklist" class="nav-link" data-page="checklist" onclick="navigateTo('checklist')">
         <i data-lucide="list-checks"></i><span>Vendor Checklist</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="theme-generator">
+      <li><a href="#theme-generator" class="nav-link" data-page="theme-generator" onclick="navigateTo('theme-generator')">
         <i data-lucide="palette"></i><span>Theme Studio</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="invitations">
+      <li><a href="#invitations" class="nav-link" data-page="invitations" onclick="navigateTo('invitations')">
         <i data-lucide="mail"></i><span>Invitation Studio</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="event-day">
+      <li><a href="#event-day" class="nav-link" data-page="event-day" onclick="navigateTo('event-day')">
         <i data-lucide="play-circle"></i><span>Day-Of Mode</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="idea-generator">
+      <li><a href="#idea-generator" class="nav-link" data-page="idea-generator" onclick="navigateTo('idea-generator')">
         <i data-lucide="lightbulb"></i><span>Idea Studio</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="analytics">
-        <i data-lucide="bar-chart-3"></i><span>Reports & Analytics</span>
+      <li><a href="#analytics" class="nav-link" data-page="analytics" onclick="navigateTo('analytics')">
+        <i data-lucide="bar-chart-3"></i><span>Reports &amp; Analytics</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="my-events">
+      <li><a href="#my-events" class="nav-link" data-page="my-events" onclick="navigateTo('my-events')">
         <i data-lucide="folder-heart"></i><span>My Events</span>
       </a></li>
-      <li><a href="#" class="nav-link" data-page="settings">
-        <i data-lucide="sliders"></i><span>Settings & Backup</span>
+      <li><a href="#settings" class="nav-link" data-page="settings" onclick="navigateTo('settings')">
+        <i data-lucide="sliders"></i><span>Settings &amp; Backup</span>
       </a></li>
     </ul>
 
@@ -1204,6 +1204,34 @@
 
     </div>
   </main>
+
+  <!-- ==================== MOBILE BOTTOM NAVIGATION ==================== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <a href="#dashboard" class="bottom-nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+      <i data-lucide="layout-dashboard"></i>
+      <span>Dashboard</span>
+    </a>
+    <a href="#create-event" class="bottom-nav-item" data-page="create-event" onclick="Wizard.startNewEvent(); navigateTo('create-event')">
+      <i data-lucide="calendar-plus"></i>
+      <span>Wizard</span>
+    </a>
+    <a href="#copilot" class="bottom-nav-item" data-page="copilot" onclick="navigateTo('copilot')">
+      <i data-lucide="sparkles"></i>
+      <span>Copilot</span>
+    </a>
+    <a href="#ai-planner" class="bottom-nav-item" data-page="ai-planner" onclick="navigateTo('ai-planner')">
+      <i data-lucide="brain-circuit"></i>
+      <span>Plan</span>
+    </a>
+    <a href="#budget" class="bottom-nav-item" data-page="budget" onclick="navigateTo('budget')">
+      <i data-lucide="wallet"></i>
+      <span>Budget</span>
+    </a>
+    <a href="#guests" class="bottom-nav-item" data-page="guests" onclick="navigateTo('guests')">
+      <i data-lucide="users"></i>
+      <span>Guests</span>
+    </a>
+  </nav>
 
   <!-- ==================== MODALS ==================== -->
 

@@ -395,8 +395,21 @@ const SmartPlanner = {
   },
 
   // ═══════════════════════════════════════════════════════════════════
-  // PUBLIC API
+  // PUBLIC API & ALIASES
   // ═══════════════════════════════════════════════════════════════════
+
+  generatePlan(event) {
+    return this.generateEventPlan(event);
+  },
+  generateTimeline(event) {
+    return this.generateEventTimeline(event);
+  },
+  generateThemes(options) {
+    return this.generateThemeIdeas(options);
+  },
+  generateBudget(event) {
+    return this.generateBudgetBreakdown(event);
+  },
 
   generateEventPlan(event) {
     const cfg = this._typeConfig[event.type] || this._typeConfig.Wedding;

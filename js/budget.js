@@ -206,6 +206,7 @@ function renderBudget(budget, event) {
 }
 
 function renderBudgetChart(categories) {
+  if (typeof Chart === 'undefined') return;
   const canvas = document.getElementById('budgetChart');
   if (!canvas) return;
 

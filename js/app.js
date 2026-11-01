@@ -4,7 +4,11 @@
  * dashboard metrics, countdown timers, and module initialization.
  */
 
-// ─── Global State ────────────────────────────────────────────────────────────
+// ─── Global State & Polyfills ────────────────────────────────────────────────
+if (typeof window !== 'undefined' && typeof window.lucide === 'undefined') {
+  window.lucide = { createIcons: () => {} };
+}
+
 let currentPage = 'dashboard';
 let dashboardBudgetChart = null;
 let dashboardCategoryChart = null;
@@ -136,6 +140,17 @@ function navigateTo(page) {
 
   currentPage = page;
 
+  // Sync browser URL hash for bookmarking & history
+  if (typeof window !== 'undefined' && window.location) {
+    if (window.location.hash !== `#${page}`) {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', `#${page}`);
+      } else {
+        window.location.hash = `#${page}`;
+      }
+    }
+  }
+
   // Update topbar title
   const titles = {
     dashboard: 'Dashboard',
@@ -156,7 +171,8 @@ function navigateTo(page) {
     settings: 'Settings & Backup',
   };
   const titleText = titles[page] || 'EventEase AI';
-  document.getElementById('topbarTitle').textContent = titleText;
+  const topbarTitleEl = document.getElementById('topbarTitle');
+  if (topbarTitleEl) topbarTitleEl.textContent = titleText;
   document.title = `${titleText} – EventEase AI`;
 
   // Close mobile sidebar
@@ -172,65 +188,100 @@ function navigateTo(page) {
   if (selectorWrap) selectorWrap.style.display = showSelector ? 'flex' : 'none';
 
   // Page lifecycle triggers
-  switch (page) {
-    case 'dashboard':
-      renderDashboardPage();
-      break;
-    case 'create-event':
-      // wizard initialized
-      break;
-    case 'copilot':
-      Copilot.renderChatHistory();
-      Copilot.updateModelBadge();
-      break;
-    case 'ai-planner':
-      if (typeof loadPlannerPage === 'function') loadPlannerPage();
-      break;
-    case 'budget':
-      if (typeof loadBudgetPage === 'function') loadBudgetPage();
-      break;
-    case 'guests':
-      Guests.render();
-      break;
-    case 'vendors':
-      Vendors.render();
-      break;
-    case 'timeline':
-      if (typeof loadTimelinePage === 'function') loadTimelinePage();
-      break;
-    case 'checklist':
-      if (typeof loadChecklistPage === 'function') loadChecklistPage();
-      break;
-    case 'theme-generator':
-      if (typeof loadThemeGeneratorPage === 'function') loadThemeGeneratorPage();
-      break;
-    case 'invitations':
-      Invitations.loadFromActiveEvent();
-      Invitations.updatePreview();
-      break;
-    case 'event-day':
-      EventDay.render();
-      break;
-    case 'idea-generator':
-      renderIdeaGeneratorPage();
-      break;
-    case 'analytics':
-      Analytics.render();
-      break;
-    case 'my-events':
-      renderMyEventsPage();
-      break;
-    case 'settings':
-      loadSettingsPage();
-      break;
+  try {
+    switch (page) {
+      case 'dashboard':
+        renderDashboardPage();
+        break;
+      case 'create-event':
+        // wizard initialized
+        break;
+      case 'copilot':
+        Copilot.renderChatHistory();
+        Copilot.updateModelBadge();
+        break;
+      case 'ai-planner':
+        if (typeof loadPlannerPage === 'function') loadPlannerPage();
+        break;
+      case 'budget':
+        if (typeof loadBudgetPage === 'function') loadBudgetPage();
+        break;
+      case 'guests':
+        Guests.render();
+        break;
+      case 'vendors':
+        Vendors.render();
+        break;
+      case 'timeline':
+        if (typeof loadTimelinePage === 'function') loadTimelinePage();
+        break;
+      case 'checklist':
+        if (typeof loadChecklistPage === 'function') loadChecklistPage();
+        break;
+      case 'theme-generator':
+        if (typeof loadThemeGeneratorPage === 'function') loadThemeGeneratorPage();
+        break;
+      case 'invitations':
+        Invitations.loadFromActiveEvent();
+        Invitations.updatePreview();
+        break;
+      case 'event-day':
+        EventDay.render();
+        break;
+      case 'idea-generator':
+        renderIdeaGeneratorPage();
+        break;
+      case 'analytics':
+        Analytics.render();
+        break;
+      case 'my-events':
+        renderMyEventsPage();
+        break;
+      case 'settings':
+        loadSettingsPage();
+        break;
+    }
+  } catch (err) {
+    console.warn(`Lifecycle error for page "${page}":`, err);
   }
 
-  lucide.createIcons();
+  if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    lucide.createIcons();
+  }
 }
 
 function loadInitialRoute() {
-  navigateTo('dashboard');
+  const hash = (window.location.hash || '').replace(/^#\/?/, '').trim();
+  const validPages = [
+    'dashboard', 'create-event', 'copilot', 'ai-planner', 'budget',
+    'guests', 'vendors', 'timeline', 'checklist', 'theme-generator',
+    'invitations', 'event-day', 'idea-generator', 'analytics', 'my-events', 'settings'
+  ];
+  if (hash && validPages.includes(hash)) {
+    navigateTo(hash);
+  } else {
+    navigateTo('dashboard');
+  }
 }
+
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('hashchange', () => {
+    const hash = (window.location.hash || '').replace(/^#\/?/, '').trim();
+    if (hash && hash !== currentPage) {
+      navigateTo(hash);
+    }
+  });
+}
+
+function loadDemoCelebration() {
+  seedDemoCelebration();
+  updateTopbarEventSelector();
+  updateProfileUI();
+  navigateTo('dashboard');
+  showToast('Loaded sample celebration demo! 🎉', 'success');
+}
+window.loadDemoCelebration = loadDemoCelebration;
+window.updateEventSelector = updateTopbarEventSelector;
 
 // ─── Topbar & Sidebar Setup ──────────────────────────────────────────────────
 function setupSidebarNavigation() {
@@ -561,6 +612,7 @@ function startCountdownTimer(dateStr) {
 }
 
 function renderDashboardCharts(ev) {
+  if (typeof Chart === 'undefined') return;
   const canvasBudget = document.getElementById('dashBudgetOverviewChart');
   const canvasCat = document.getElementById('dashCategoryChart');
 
