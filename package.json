@@ -2,7 +2,6 @@
   "name": "eventease-ai",
   "version": "2.0.0",
   "description": "EventEase AI – Smart Celebration Planner powered by Local Open-Source AI (Ollama) & Smart Planning Mode. 100% Free, Zero API Keys, Private.",
-  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
