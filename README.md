@@ -1,0 +1,1 @@
+# EventEase-AI-Smart-Celebration-Planner
