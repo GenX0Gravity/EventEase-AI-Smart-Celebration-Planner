@@ -25,7 +25,7 @@
           <span class="logo-badge">AI</span>
         </div>
       </div>
-      <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+      <button class="sidebar-close" id="sidebarClose" onclick="closeSidebar()" aria-label="Close menu">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -100,13 +100,13 @@
   </nav>
 
   <!-- Sidebar Overlay -->
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
   <!-- ==================== MAIN CONTENT AREA ==================== -->
   <main class="main-content" id="mainContent">
     <!-- Topbar -->
     <header class="topbar">
-      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">
+      <button class="hamburger" id="hamburgerBtn" onclick="openSidebar()" aria-label="Open menu">
         <i data-lucide="menu"></i>
       </button>
       <div class="topbar-title" id="topbarTitle">Dashboard</div>

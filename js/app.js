@@ -312,6 +312,14 @@ function closeSidebar() {
   document.getElementById('sidebarOverlay')?.classList.remove('active');
 }
 
+window.navigateTo = navigateTo;
+window.openSidebar = openSidebar;
+window.closeSidebar = closeSidebar;
+window.toggleTheme = toggleTheme;
+window.openProfileModal = openProfileModal;
+window.closeProfileModal = closeProfileModal;
+window.saveProfileModal = saveProfileModal;
+
 function setupTopbarControls() {
   const eventSelector = document.getElementById('eventSelectorTop');
   if (eventSelector) {
@@ -431,6 +439,11 @@ async function saveAiModalSettings() {
   closeAiModal();
   await testOllamaConnection();
 }
+
+window.showAiModal = showAiModal;
+window.closeAiModal = closeAiModal;
+window.saveAiModalSettings = saveAiModalSettings;
+window.testOllamaConnection = testOllamaConnection;
 
 // ─── Dashboard Rendering ─────────────────────────────────────────────────────
 function renderDashboardPage() {

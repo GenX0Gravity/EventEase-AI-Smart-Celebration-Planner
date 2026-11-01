@@ -1993,10 +1993,14 @@ body {
   inset: 0;
   background: rgba(0,0,0,0.5);
   z-index: 1000;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active {
+  display: flex;
   animation: fadeIn 0.2s ease;
 }
 

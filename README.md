@@ -139,7 +139,7 @@ EventEase AI generates end-to-end strategic plans, calculates mathematically bal
                                 ▼
 ┌────────────────────────────────────────────────────────┐
 │              Browser LocalStorage Database             │
-│    Events · Guests · Vendors · Expenses · Schedules   │
+│    Events · Guests · Vendors · Expenses · Schedules    │
 │         100% Private · Zero Cloud Database Req.        │
 └────────────────────────────────────────────────────────┘
 ```
