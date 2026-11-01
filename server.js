@@ -9,6 +9,7 @@ const path = require('path');
 
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
+const OLLAMA_TARGET = 'http://127.0.0.1:11434';
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=UTF-8',
@@ -25,9 +26,52 @@ const MIME_TYPES = {
 };
 
 const server = http.createServer((req, res) => {
+  // CORS Preflight
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    });
+    res.end();
+    return;
+  }
+
   // Normalize URL and remove query params
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = decodeURIComponent(parsedUrl.pathname);
+
+  // ─── Proxy /api/ollama/* to local Ollama daemon ───────────────
+  if (pathname.startsWith('/api/ollama/')) {
+    const targetPath = pathname.replace(/^\/api\/ollama/, '/api');
+    const targetUrl = new URL(targetPath + parsedUrl.search, OLLAMA_TARGET);
+
+    const proxyReq = http.request(targetUrl, {
+      method: req.method,
+      headers: {
+        'Content-Type': req.headers['content-type'] || 'application/json',
+        'Accept': req.headers['accept'] || '*/*',
+      },
+    }, (proxyRes) => {
+      const headers = { ...proxyRes.headers };
+      headers['Access-Control-Allow-Origin'] = '*';
+      headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
+      headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
+      res.writeHead(proxyRes.statusCode, headers);
+      proxyRes.pipe(res);
+    });
+
+    proxyReq.on('error', (err) => {
+      res.writeHead(502, {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      });
+      res.end(JSON.stringify({ error: 'Ollama daemon unreachable on 127.0.0.1:11434', details: err.message }));
+    });
+
+    req.pipe(proxyReq);
+    return;
+  }
 
   if (pathname === '/') {
     pathname = '/index.html';
@@ -76,4 +120,3 @@ server.listen(PORT, '127.0.0.1', () => {
   console.log(`EventEase AI server running at http://127.0.0.1:${PORT}`);
   console.log(`Open in browser: http://localhost:${PORT}`);
 });
-

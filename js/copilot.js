@@ -191,7 +191,8 @@ Provide insightful, actionable, practical, cost-conscious, and creative event pl
             { role: 'user', content: query }
           ]);
           replyText = res;
-        } catch {
+        } catch (chatErr) {
+          console.warn('Ollama Copilot chat error, falling back to Smart Planning:', chatErr);
           replyText = this.generateSmartFallbackReply(query, activeEvent);
         }
       } else {
@@ -329,3 +330,4 @@ Feel free to ask me to drill down into catering menus, budget adjustments, or da
       .replace(/"/g, '&quot;');
   }
 };
+

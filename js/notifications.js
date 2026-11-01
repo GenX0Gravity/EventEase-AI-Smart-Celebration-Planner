@@ -232,3 +232,4 @@ const Notifications = {
       .replace(/"/g, '&quot;');
   }
 };
+

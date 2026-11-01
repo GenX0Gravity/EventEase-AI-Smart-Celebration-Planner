@@ -323,6 +323,7 @@ function updateAiStatusUI() {
     pill.title = 'Rule-Based Local Intelligence Active (Zero Setup)';
   }
 }
+window.updateAIStatus = updateAiStatusUI;
 
 async function testOllamaConnection(event) {
   if (event) event.stopPropagation();
@@ -333,7 +334,7 @@ async function testOllamaConnection(event) {
   }
 
   showToast('Pinging local Ollama endpoint…', 'info');
-  const success = await OllamaClient.checkConnection();
+  const result = await OllamaClient.checkConnection(true);
   updateAiStatusUI();
   Copilot.updateModelBadge();
 
@@ -342,7 +343,7 @@ async function testOllamaConnection(event) {
     lucide.createIcons();
   }
 
-  if (success) {
+  if (OllamaClient.isConnected) {
     showToast(`🟢 Connected to Ollama! Model: ${OllamaClient.currentModel}`, 'success');
   } else {
     showToast('🟡 Ollama offline. Operating smoothly in Smart Planning Mode!', 'info');
@@ -354,8 +355,9 @@ function showAiModal() {
   if (!modal) return;
 
   const hostInput = document.getElementById('ollamaHostInput');
-  const modelSelect = document.getElementById('ollamaModelSelect');
   if (hostInput) hostInput.value = OllamaClient.host;
+
+  OllamaClient.syncModelDropdowns();
 
   modal.classList.add('active');
   lucide.createIcons();
@@ -371,7 +373,6 @@ async function saveAiModalSettings() {
   const modelSelect = document.getElementById('ollamaModelSelect');
   if (hostInput && hostInput.value.trim()) {
     OllamaClient.host = hostInput.value.trim();
-    localStorage.setItem('eventease_ollama_host', OllamaClient.host);
   }
   if (modelSelect && modelSelect.value) {
     OllamaClient.setModel(modelSelect.value);

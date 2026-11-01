@@ -16,7 +16,7 @@ Return only a single JSON object conforming strictly to the requested schema.`,
       throw new Error('SMART_MODE_ONLY');
     }
 
-    if (!OllamaClient.isConnected()) {
+    if (!OllamaClient.isConnected) {
       const check = await OllamaClient.checkConnection();
       if (!check.connected) throw new Error('OLLAMA_OFFLINE');
     }

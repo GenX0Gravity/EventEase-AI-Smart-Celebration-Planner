@@ -215,3 +215,4 @@ const Analytics = {
     showToast('Event dossier downloaded! 📄', 'success');
   }
 };
+

@@ -387,3 +387,4 @@ const Invitations = {
       .replace(/"/g, '&quot;');
   }
 };
+

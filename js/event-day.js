@@ -252,3 +252,4 @@ const EventDay = {
       .replace(/"/g, '&quot;');
   }
 };
+
