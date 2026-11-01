@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventEase AI – Smart Celebration Planner</title>
+  <meta name="description" content="Free, open-source AI-powered event planning for weddings, birthdays, anniversaries, and community celebrations using Local Ollama and Smart Planning." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">
+          <i data-lucide="sparkles"></i>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">EventEase</span>
+          <span class="logo-badge">AI</span>
+        </div>
+      </div>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div class="sidebar-user" id="sidebarUser" style="display:none;">
+      <div class="user-avatar" id="userAvatar">E</div>
+      <div class="user-info">
+        <div class="user-name" id="userName">Event Planner</div>
+        <div class="user-subtitle">Local AI Powered</div>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="#" class="nav-link active" data-page="dashboard">
+        <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="create-event">
+        <i data-lucide="calendar-plus"></i><span>Create Event</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="ai-planner">
+        <i data-lucide="brain-circuit"></i><span>AI Planner</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="budget">
+        <i data-lucide="wallet"></i><span>Budget Planner</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="timeline">
+        <i data-lucide="clock"></i><span>Event Timeline</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="checklist">
+        <i data-lucide="list-checks"></i><span>Vendor Checklist</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="theme-generator">
+        <i data-lucide="wand-2"></i><span>Theme Generator</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="my-events">
+        <i data-lucide="folder-heart"></i><span>My Events</span>
+      </a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button class="btn-ghost" onclick="showAiModal()">
+        <i data-lucide="cpu"></i><span>Local AI & Models</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">
+        <i data-lucide="menu"></i>
+      </button>
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-actions">
+        <div class="event-selector-wrap" id="eventSelectorWrap" style="display:none;">
+          <select id="eventSelectorTop" class="event-selector-top">
+            <option value="">Select Event</option>
+          </select>
+        </div>
+
+        <!-- AI Status Indicator Pill -->
+        <div class="ai-status-pill status-checking" id="aiStatusPill" onclick="showAiModal()" title="Local AI Status (Click to configure)">
+          <span class="status-dot"></span>
+          <span class="status-label" id="aiStatusLabel">Checking AI…</span>
+        </div>
+
+        <!-- Test Connection Button -->
+        <button class="btn-icon" id="btnTestConnection" onclick="testOllamaConnection(event)" title="Test Ollama Connection">
+          <i data-lucide="refresh-cw"></i>
+        </button>
+
+        <button class="btn-primary-sm" onclick="navigateTo('create-event')">
+          <i data-lucide="plus"></i><span>New Event</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Pages -->
+    <div class="page-container">
+
+      <!-- ===================== DASHBOARD PAGE ===================== -->
+      <section class="page active" id="page-dashboard">
+        <!-- Hero Section -->
+        <div class="hero-section">
+          <div class="hero-content">
+            <div class="hero-badge">
+              <i data-lucide="sparkles"></i>
+              <span>100% Free · Local AI & Smart Planning</span>
+            </div>
+            <h1 class="hero-title">Plan Less.<br /><span class="gradient-text">Celebrate More.</span></h1>
+            <p class="hero-desc">
+              EventEase AI transforms your celebration into reality — completely free with zero API keys. Powered by local open-source models (Ollama) with instant rule-based Smart Planning fallback.
+            </p>
+            <div class="hero-cta">
+              <button class="btn-primary" onclick="navigateTo('create-event')">
+                <i data-lucide="rocket"></i>
+                Start Planning
+              </button>
+              <button class="btn-outline" onclick="loadDemoEvent()">
+                <i data-lucide="eye"></i>
+                See Demo
+              </button>
+            </div>
+            <div class="hero-stats">
+              <div class="stat"><span class="stat-num">Free</span><span class="stat-label">No API Keys Required</span></div>
+              <div class="stat-divider"></div>
+              <div class="stat"><span class="stat-num" id="heroModelName">Ollama</span><span class="stat-label">Local & Private AI</span></div>
+              <div class="stat-divider"></div>
+              <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Offline Capable</span></div>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div class="hero-card floating" style="top:0;right:40px;">
+              <div class="mini-card-icon" style="background:linear-gradient(135deg,#a78bfa,#ec4899)"><i data-lucide="wedding-ring" style="color:white"></i></div>
+              <div>
+                <div class="mini-card-title">Wedding Planning</div>
+                <div class="mini-card-sub">AI plan ready · Free</div>
+              </div>
+            </div>
+            <div class="hero-card floating delay-1" style="top:120px;right:-20px;">
+              <div class="mini-card-icon" style="background:linear-gradient(135deg,#f59e0b,#f97316)"><i data-lucide="cake" style="color:white"></i></div>
+              <div>
+                <div class="mini-card-title">Birthday Party</div>
+                <div class="mini-card-sub">Smart budget balanced ✓</div>
+              </div>
+            </div>
+            <div class="hero-card floating delay-2" style="top:240px;right:20px;">
+              <div class="mini-card-icon" style="background:linear-gradient(135deg,#06b6d4,#3b82f6)"><i data-lucide="heart" style="color:white"></i></div>
+              <div>
+                <div class="mini-card-title">Anniversary</div>
+                <div class="mini-card-sub">Timeline scheduled ✓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="section-header">
+          <h2>Everything You Need</h2>
+          <p>All your celebration planning tools in one intelligent, private platform</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card" onclick="navigateTo('ai-planner')">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)">
+              <i data-lucide="brain-circuit"></i>
+            </div>
+            <h3>AI Event Planner</h3>
+            <p>Comprehensive event plan including themes, decorations, entertainment, and catering suggestions tailored to your preferences.</p>
+            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
+          </div>
+          <div class="feature-card" onclick="navigateTo('budget')">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#10b981,#059669)">
+              <i data-lucide="wallet"></i>
+            </div>
+            <h3>Smart Budget Planner</h3>
+            <p>Intelligent budget allocation across all event categories. Visual charts show exactly where every rupee goes.</p>
+            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
+          </div>
+          <div class="feature-card" onclick="navigateTo('timeline')">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
+              <i data-lucide="clock"></i>
+            </div>
+            <h3>Event Timeline</h3>
+            <p>Never miss a deadline. Track preparation milestones with smart task management from booking to the big day.</p>
+            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
+          </div>
+          <div class="feature-card" onclick="navigateTo('checklist')">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#ec4899,#be185d)">
+              <i data-lucide="list-checks"></i>
+            </div>
+            <h3>Vendor Checklist</h3>
+            <p>Keep track of all vendors and tasks. Generate with AI, add custom items, and mark them complete as you make progress.</p>
+            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
+          </div>
+          <div class="feature-card" onclick="navigateTo('theme-generator')">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">
+              <i data-lucide="wand-2"></i>
+            </div>
+            <h3>Theme Generator</h3>
+            <p>Discover beautiful themes, color palettes, and unique experience ideas powered by AI creativity and smart design.</p>
+            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
+          </div>
+          <div class="feature-card" onclick="navigateTo('my-events')">
+            <div class="feature-icon" style="background:linear-gradient(135deg,#f43f5e,#e11d48)">
+              <i data-lucide="folder-heart"></i>
+            </div>
+            <h3>My Events</h3>
+            <p>All your events saved locally. Revisit, edit, and track the progress of every celebration you're planning.</p>
+            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
+          </div>
+        </div>
+
+        <!-- Recent Events Preview -->
+        <div class="section-header" style="margin-top:40px;">
+          <h2>Recent Events</h2>
+          <button class="btn-ghost-sm" onclick="navigateTo('my-events')">View All</button>
+        </div>
+        <div id="dashboardRecentEvents" class="recent-events-grid">
+          <div class="empty-state-small">
+            <i data-lucide="calendar"></i>
+            <p>No events yet. <a href="#" onclick="navigateTo('create-event');return false;">Create your first event →</a></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CREATE EVENT PAGE ===================== -->
+      <section class="page" id="page-create-event">
+        <div class="page-header">
+          <h1>Create New Event</h1>
+          <p>Tell us about your event and our AI will craft the perfect plan</p>
+        </div>
+
+        <div class="form-layout">
+          <div class="form-card">
+            <form id="eventForm" novalidate>
+              <div class="form-grid">
+                <!-- Event Name -->
+                <div class="form-group full-width">
+                  <label class="form-label" for="eventName">
+                    <i data-lucide="type"></i> Event Name *
+                  </label>
+                  <input type="text" id="eventName" name="eventName" class="form-input"
+                    placeholder="e.g., Sarah & John's Wedding, Emma's 30th Birthday…" required maxlength="100" />
+                  <div class="error-msg" id="eventNameError"></div>
+                </div>
+
+                <!-- Event Type -->
+                <div class="form-group">
+                  <label class="form-label" for="eventType">
+                    <i data-lucide="tag"></i> Event Type *
+                  </label>
+                  <select id="eventType" name="eventType" class="form-input" required>
+                    <option value="">Select event type…</option>
+                    <option value="Wedding">💍 Wedding</option>
+                    <option value="Birthday">🎂 Birthday</option>
+                    <option value="Anniversary">❤️ Anniversary</option>
+                    <option value="Community Event">🎉 Community Event</option>
+                    <option value="Corporate Event">🏢 Corporate Event</option>
+                    <option value="Baby Shower">👶 Baby Shower</option>
+                    <option value="Graduation">🎓 Graduation Party</option>
+                  </select>
+                  <div class="error-msg" id="eventTypeError"></div>
+                </div>
+
+                <!-- Event Date -->
+                <div class="form-group">
+                  <label class="form-label" for="eventDate">
+                    <i data-lucide="calendar"></i> Event Date *
+                  </label>
+                  <input type="date" id="eventDate" name="eventDate" class="form-input" required />
+                  <div class="error-msg" id="eventDateError"></div>
+                </div>
+
+                <!-- Event Location -->
+                <div class="form-group">
+                  <label class="form-label" for="eventLocation">
+                    <i data-lucide="map-pin"></i> Event Location *
+                  </label>
+                  <input type="text" id="eventLocation" name="eventLocation" class="form-input"
+                    placeholder="City, Venue, or Address" required maxlength="150" />
+                  <div class="error-msg" id="eventLocationError"></div>
+                </div>
+
+                <!-- Number of Guests -->
+                <div class="form-group">
+                  <label class="form-label" for="guestCount">
+                    <i data-lucide="users"></i> Number of Guests *
+                  </label>
+                  <input type="number" id="guestCount" name="guestCount" class="form-input"
+                    placeholder="e.g., 150" min="1" max="10000" required />
+                  <div class="error-msg" id="guestCountError"></div>
+                </div>
+
+                <!-- Total Budget -->
+                <div class="form-group">
+                  <label class="form-label" for="totalBudget">
+                    <i data-lucide="indian-rupee"></i> Total Budget (₹) *
+                  </label>
+                  <input type="number" id="totalBudget" name="totalBudget" class="form-input"
+                    placeholder="e.g., 500000" min="1000" required />
+                  <div class="error-msg" id="totalBudgetError"></div>
+                </div>
+
+                <!-- Theme/Style -->
+                <div class="form-group">
+                  <label class="form-label" for="eventTheme">
+                    <i data-lucide="palette"></i> Preferred Theme / Style
+                  </label>
+                  <input type="text" id="eventTheme" name="eventTheme" class="form-input"
+                    placeholder="e.g., Royal, Boho, Modern, Rustic, Garden…" maxlength="100" />
+                </div>
+
+                <!-- Cuisine Preference -->
+                <div class="form-group">
+                  <label class="form-label" for="cuisinePreference">
+                    <i data-lucide="utensils"></i> Cuisine Preference
+                  </label>
+                  <select id="cuisinePreference" name="cuisinePreference" class="form-input">
+                    <option value="">Any cuisine</option>
+                    <option value="Indian">Indian</option>
+                    <option value="Continental">Continental</option>
+                    <option value="Mixed/Buffet">Mixed / Buffet</option>
+                    <option value="Vegetarian">Vegetarian Only</option>
+                    <option value="Vegan">Vegan</option>
+                    <option value="International">International</option>
+                  </select>
+                </div>
+
+                <!-- Additional Requirements -->
+                <div class="form-group full-width">
+                  <label class="form-label" for="additionalReqs">
+                    <i data-lucide="message-square"></i> Additional Requirements
+                  </label>
+                  <textarea id="additionalReqs" name="additionalReqs" class="form-input form-textarea"
+                    placeholder="Any special requests, accessibility needs, cultural traditions, dietary restrictions, entertainment preferences…"
+                    rows="4" maxlength="500"></textarea>
+                  <div class="char-count"><span id="reqsCharCount">0</span>/500</div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn-outline" onclick="loadDemoEvent()">
+                  <i data-lucide="zap"></i> Load Demo Data
+                </button>
+                <button type="button" class="btn-ghost" onclick="clearForm()">
+                  <i data-lucide="trash-2"></i> Clear
+                </button>
+                <button type="submit" class="btn-primary" id="generateBtn">
+                  <i data-lucide="brain-circuit"></i> Generate AI Plan
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="form-sidebar">
+            <div class="tip-card">
+              <div class="tip-icon"><i data-lucide="lightbulb"></i></div>
+              <h3>Pro Tips</h3>
+              <ul>
+                <li>Be specific about your theme for better suggestions</li>
+                <li>Include dietary restrictions in additional requirements</li>
+                <li>Mention cultural traditions for personalized advice</li>
+                <li>Set a realistic budget for accurate planning</li>
+              </ul>
+            </div>
+            <div class="event-type-info" id="eventTypeInfo" style="display:none;">
+              <div id="eventTypeContent"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== AI PLANNER PAGE ===================== -->
+      <section class="page" id="page-ai-planner">
+        <div class="page-header">
+          <div class="page-header-flex">
+            <div>
+              <h1><i data-lucide="brain-circuit"></i> AI Event Planner</h1>
+              <p>Personalized event plan powered by Local AI or Smart Planning Mode</p>
+            </div>
+            <div class="planner-toolbar-controls">
+              <label for="plannerModelSelect" class="toolbar-label"><i data-lucide="cpu"></i> Model:</label>
+              <select id="plannerModelSelect" class="form-input-sm planner-model-select" onchange="onPlannerModelChange(this.value)">
+                <option value="qwen2.5:3b">qwen2.5:3b (Recommended)</option>
+                <option value="llama3.2:3b">llama3.2:3b (Balanced)</option>
+                <option value="gemma3:1b">gemma3:1b (Fastest)</option>
+                <option value="smart-only">Smart Planning Mode (Rule-Based)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="plannerEmpty" class="empty-state">
+          <div class="empty-icon"><i data-lucide="brain-circuit"></i></div>
+          <h2>No Plan Generated Yet</h2>
+          <p>Create an event first, then generate your personalized celebration plan</p>
+          <button class="btn-primary" onclick="navigateTo('create-event')">
+            <i data-lucide="plus"></i> Create Event
+          </button>
+        </div>
+
+        <div id="plannerContent" style="display:none;">
+          <div class="planner-event-info" id="plannerEventInfo"></div>
+
+          <div class="planner-actions">
+            <button class="btn-primary" id="generatePlanBtn" onclick="generateEventPlan()">
+              <i data-lucide="sparkles"></i> Generate Again
+            </button>
+            <button class="btn-outline" id="copyPlanBtn" onclick="copyPlanToClipboard()">
+              <i data-lucide="copy"></i> Copy Plan
+            </button>
+            <button class="btn-outline" id="downloadPlanBtn" onclick="exportPlan()">
+              <i data-lucide="download"></i> Download Event Plan
+            </button>
+          </div>
+
+          <!-- Mode badge: Local AI vs Smart Planning Mode -->
+          <div id="plannerModeBadge" class="mode-badge-wrap" style="display:none;"></div>
+
+          <div id="plannerLoading" class="loading-container" style="display:none;">
+            <div class="ai-loader">
+              <div class="ai-loader-ring"></div>
+              <i data-lucide="brain-circuit" class="ai-loader-icon"></i>
+            </div>
+            <p class="loading-text">Crafting your perfect event plan…</p>
+            <div class="loading-steps">
+              <div class="loading-step active" id="lstep1">Analyzing event details & budget</div>
+              <div class="loading-step" id="lstep2">Generating creative themes & decor</div>
+              <div class="loading-step" id="lstep3">Optimizing catering & entertainment</div>
+              <div class="loading-step" id="lstep4">Finalizing personalized suggestions</div>
+            </div>
+          </div>
+
+          <div id="planResults" style="display:none;">
+            <div class="plan-grid" id="planGrid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== BUDGET PLANNER PAGE ===================== -->
+      <section class="page" id="page-budget">
+        <div class="page-header">
+          <h1><i data-lucide="wallet"></i> Smart Budget Planner</h1>
+          <p>See exactly how your budget is allocated across all categories</p>
+        </div>
+
+        <div id="budgetEmpty" class="empty-state">
+          <div class="empty-icon"><i data-lucide="wallet"></i></div>
+          <h2>No Budget Plan Yet</h2>
+          <p>Create an event to generate your smart budget breakdown</p>
+          <button class="btn-primary" onclick="navigateTo('create-event')">
+            <i data-lucide="plus"></i> Create Event
+          </button>
+        </div>
+
+        <div id="budgetContent" style="display:none;">
+          <div class="budget-overview" id="budgetOverview"></div>
+
+          <div class="budget-actions">
+            <button class="btn-primary" id="btnGenerateBudget" onclick="generateBudgetBreakdown()">
+              <i data-lucide="sparkles"></i> Generate Again
+            </button>
+            <div id="budgetModeBadge" class="mode-badge-wrap" style="display:none;"></div>
+          </div>
+
+          <div id="budgetLoading" class="loading-container" style="display:none;">
+            <div class="ai-loader"><div class="ai-loader-ring"></div><i data-lucide="wallet" class="ai-loader-icon"></i></div>
+            <p class="loading-text">Optimizing your budget allocation…</p>
+          </div>
+
+          <div id="budgetResults" style="display:none;">
+            <div class="budget-layout">
+              <div class="budget-bars-section">
+                <h3>Budget Breakdown</h3>
+                <div id="budgetBars"></div>
+              </div>
+              <div class="budget-chart-section">
+                <h3>Budget Distribution</h3>
+                <div class="chart-container">
+                  <canvas id="budgetChart"></canvas>
+                </div>
+                <div id="budgetLegend" class="chart-legend"></div>
+              </div>
+            </div>
+            <div class="budget-tips" id="budgetTips"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== TIMELINE PAGE ===================== -->
+      <section class="page" id="page-timeline">
+        <div class="page-header">
+          <h1><i data-lucide="clock"></i> Event Timeline</h1>
+          <p>Track every milestone from today to your big day</p>
+        </div>
+
+        <div id="timelineEmpty" class="empty-state">
+          <div class="empty-icon"><i data-lucide="clock"></i></div>
+          <h2>No Timeline Yet</h2>
+          <p>Create an event to generate your preparation timeline</p>
+          <button class="btn-primary" onclick="navigateTo('create-event')">
+            <i data-lucide="plus"></i> Create Event
+          </button>
+        </div>
+
+        <div id="timelineContent" style="display:none;">
+          <div class="timeline-header-bar" id="timelineHeaderBar"></div>
+
+          <div class="timeline-actions">
+            <button class="btn-primary" id="btnGenerateTimeline" onclick="generateEventTimeline()">
+              <i data-lucide="sparkles"></i> Generate Again
+            </button>
+            <div id="timelineModeBadge" class="mode-badge-wrap" style="display:none;"></div>
+          </div>
+
+          <div id="timelineLoading" class="loading-container" style="display:none;">
+            <div class="ai-loader"><div class="ai-loader-ring"></div><i data-lucide="clock" class="ai-loader-icon"></i></div>
+            <p class="loading-text">Building your preparation timeline…</p>
+          </div>
+
+          <div id="timelineResults" style="display:none;">
+            <div class="progress-overview" id="progressOverview"></div>
+            <div class="timeline-list" id="timelineList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== VENDOR CHECKLIST PAGE ===================== -->
+      <section class="page" id="page-checklist">
+        <div class="page-header">
+          <div class="page-header-flex">
+            <div>
+              <h1><i data-lucide="list-checks"></i> Vendor Checklist</h1>
+              <p>Track all vendors and tasks for your event</p>
+            </div>
+            <div class="checklist-top-actions">
+              <button class="btn-primary-sm" id="btnRegenChecklist" onclick="generateChecklistFromAI()">
+                <i data-lucide="sparkles"></i> Regenerate with AI
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="checklistEmpty" class="empty-state">
+          <div class="empty-icon"><i data-lucide="list-checks"></i></div>
+          <h2>No Checklist Yet</h2>
+          <p>Create an event to start tracking your vendors and tasks</p>
+          <button class="btn-primary" onclick="navigateTo('create-event')">
+            <i data-lucide="plus"></i> Create Event
+          </button>
+        </div>
+
+        <div id="checklistContent" style="display:none;">
+          <div class="checklist-header-row">
+            <div class="checklist-stats" id="checklistStats"></div>
+            <div id="checklistModeBadge" class="mode-badge-wrap" style="display:none;"></div>
+          </div>
+
+          <div class="checklist-add-task">
+            <div class="add-task-form">
+              <select id="newTaskCategory" class="form-input-sm">
+                <option value="Venue">Venue</option>
+                <option value="Catering">Catering</option>
+                <option value="Photography">Photography</option>
+                <option value="Decoration">Decoration</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Invitations">Invitations</option>
+                <option value="Custom">Custom</option>
+              </select>
+              <input type="text" id="newTaskText" class="form-input-sm" placeholder="Add a custom task…" maxlength="100" />
+              <button class="btn-primary-sm" onclick="addCustomTask()">
+                <i data-lucide="plus"></i> Add Task
+              </button>
+            </div>
+          </div>
+
+          <div id="checklistCategories"></div>
+        </div>
+      </section>
+
+      <!-- ===================== THEME GENERATOR PAGE ===================== -->
+      <section class="page" id="page-theme-generator">
+        <div class="page-header">
+          <h1><i data-lucide="wand-2"></i> AI Theme Generator</h1>
+          <p>Discover creative themes and ideas for your celebration</p>
+        </div>
+
+        <div class="theme-generator-layout">
+          <div class="theme-input-card">
+            <h3>Generate Theme Ideas</h3>
+            <div class="theme-form">
+              <div class="form-group">
+                <label class="form-label">Event Type</label>
+                <select id="themeEventType" class="form-input">
+                  <option value="Wedding">💍 Wedding</option>
+                  <option value="Birthday">🎂 Birthday</option>
+                  <option value="Anniversary">❤️ Anniversary</option>
+                  <option value="Community Event">🎉 Community Event</option>
+                  <option value="Corporate Event">🏢 Corporate Event</option>
+                  <option value="Baby Shower">👶 Baby Shower</option>
+                  <option value="Graduation">🎓 Graduation Party</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Season / Time</label>
+                <select id="themeSeason" class="form-input">
+                  <option value="Any">Any Season</option>
+                  <option value="Spring">🌸 Spring</option>
+                  <option value="Summer">☀️ Summer</option>
+                  <option value="Monsoon">🌧️ Monsoon</option>
+                  <option value="Autumn">🍂 Autumn</option>
+                  <option value="Winter">❄️ Winter</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Style Preference</label>
+                <select id="themeStyle" class="form-input">
+                  <option value="Any">Any Style</option>
+                  <option value="Royal & Luxurious">👑 Royal & Luxurious</option>
+                  <option value="Boho & Rustic">🌿 Boho & Rustic</option>
+                  <option value="Modern & Minimalist">◻️ Modern & Minimalist</option>
+                  <option value="Garden & Floral">🌺 Garden & Floral</option>
+                  <option value="Vintage & Classic">🕰️ Vintage & Classic</option>
+                  <option value="Tropical & Vibrant">🌴 Tropical & Vibrant</option>
+                  <option value="Fairy Tale">🏰 Fairy Tale</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Additional Notes</label>
+                <textarea id="themeNotes" class="form-input form-textarea" rows="3"
+                  placeholder="Any specific preferences, cultural elements, or must-haves…" maxlength="200"></textarea>
+              </div>
+              <button class="btn-primary full-width" id="btnGenerateTheme" onclick="generateThemeIdeas()">
+                <i data-lucide="wand-2"></i> Generate Theme Ideas
+              </button>
+            </div>
+          </div>
+
+          <div class="theme-results-area">
+            <div id="themeLoading" class="loading-container" style="display:none;">
+              <div class="ai-loader"><div class="ai-loader-ring"></div><i data-lucide="wand-2" class="ai-loader-icon"></i></div>
+              <p class="loading-text">Generating creative theme ideas…</p>
+            </div>
+            <div id="themeResults">
+              <div class="theme-placeholder">
+                <i data-lucide="wand-2"></i>
+                <p>Your theme ideas will appear here</p>
+                <small>Select your preferences and click Generate</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== MY EVENTS PAGE ===================== -->
+      <section class="page" id="page-my-events">
+        <div class="page-header">
+          <h1><i data-lucide="folder-heart"></i> My Events</h1>
+          <p>All your saved events in one place</p>
+        </div>
+
+        <div class="my-events-actions">
+          <button class="btn-primary" onclick="navigateTo('create-event')">
+            <i data-lucide="plus"></i> Create New Event
+          </button>
+          <button class="btn-ghost btn-danger-ghost" onclick="confirmClearAllEvents()" id="clearAllEventsBtn" style="display:none;">
+            <i data-lucide="trash-2"></i> Clear All
+          </button>
+        </div>
+
+        <div id="myEventsList" class="events-list"></div>
+      </section>
+
+    </div><!-- end page-container -->
+  </main>
+
+  <!-- Bottom Mobile Navigation -->
+  <nav class="bottom-nav">
+    <a href="#" class="bottom-nav-item active" data-page="dashboard" onclick="navigateTo('dashboard');return false;">
+      <i data-lucide="layout-dashboard"></i><span>Home</span>
+    </a>
+    <a href="#" class="bottom-nav-item" data-page="create-event" onclick="navigateTo('create-event');return false;">
+      <i data-lucide="calendar-plus"></i><span>Create</span>
+    </a>
+    <a href="#" class="bottom-nav-item" data-page="ai-planner" onclick="navigateTo('ai-planner');return false;">
+      <i data-lucide="brain-circuit"></i><span>Plan</span>
+    </a>
+    <a href="#" class="bottom-nav-item" data-page="checklist" onclick="navigateTo('checklist');return false;">
+      <i data-lucide="list-checks"></i><span>Tasks</span>
+    </a>
+    <a href="#" class="bottom-nav-item" data-page="my-events" onclick="navigateTo('my-events');return false;">
+      <i data-lucide="folder-heart"></i><span>Events</span>
+    </a>
+  </nav>
+
+  <!-- Local AI & Ollama Settings Modal -->
+  <div class="modal-overlay" id="aiModal" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2><i data-lucide="cpu"></i> Local AI & Model Settings</h2>
+        <button class="modal-close" onclick="closeAiModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <!-- Status Card -->
+        <div class="ai-status-card" id="modalStatusCard">
+          <div class="status-indicator-lg">
+            <span class="status-dot-lg" id="modalStatusDot"></span>
+            <div>
+              <h4 id="modalStatusTitle">Checking Ollama connection…</h4>
+              <p id="modalStatusSub">http://localhost:11434</p>
+            </div>
+          </div>
+          <button class="btn-outline-sm" id="modalBtnTest" onclick="testOllamaConnection(event)">
+            <i data-lucide="refresh-cw"></i> Test Connection
+          </button>
+        </div>
+
+        <!-- Model Selection Dropdown -->
+        <div class="form-group" style="margin-top:16px;">
+          <label class="form-label" for="ollamaModelSelect">
+            <i data-lucide="brain-circuit"></i> Local AI Model (Ollama)
+          </label>
+          <select id="ollamaModelSelect" class="form-input">
+            <option value="qwen2.5:3b">qwen2.5:3b (Recommended · 3B params)</option>
+            <option value="llama3.2:3b">llama3.2:3b (Balanced · Meta)</option>
+            <option value="gemma3:1b">gemma3:1b (Fastest · Google 1B)</option>
+            <option value="qwen2.5:7b">qwen2.5:7b (High Quality · 7B)</option>
+            <option value="llama3.2:1b">llama3.2:1b (Ultra Light · 1B)</option>
+            <option value="mistral:7b">mistral:7b (Advanced · 7B)</option>
+          </select>
+          <small class="form-hint">Connects to your local Ollama server. 100% private, free, and runs on your machine.</small>
+        </div>
+
+        <!-- Planning Engine Preference -->
+        <div class="form-group" style="margin-top:16px;">
+          <label class="form-label"><i data-lucide="sliders"></i> Planning Engine Preference</label>
+          <div class="radio-options">
+            <label class="radio-option">
+              <input type="radio" name="planningModePref" value="auto" checked onchange="setPlanningPref(this.value)">
+              <div>
+                <strong>Auto-Detect (Recommended)</strong>
+                <span>Use Local Ollama AI when running; automatically fall back to Smart Planning Mode if offline.</span>
+              </div>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="planningModePref" value="smart-only" onchange="setPlanningPref(this.value)">
+              <div>
+                <strong>Smart Planning Mode Only</strong>
+                <span>Instant rule-based event planning. Zero AI requirements, zero memory usage, 100% offline.</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setup Guide Accordion -->
+        <div class="ollama-guide-card">
+          <h4><i data-lucide="help-circle"></i> Quick Ollama Setup (Free &amp; Open Source)</h4>
+          <ol>
+            <li>Download Ollama from <a href="https://ollama.ai" target="_blank" rel="noopener">ollama.ai</a></li>
+            <li>In your terminal, pull a model:
+              <code>ollama run qwen2.5:3b</code>
+            </li>
+            <li>To allow browser connections, launch with CORS enabled:
+              <code>OLLAMA_ORIGINS="*" ollama serve</code>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeAiModal()">Close</button>
+        <button class="btn-primary" onclick="saveAiModalSettings()">
+          <i data-lucide="check"></i> Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirmModal" style="display:none;">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2 id="confirmTitle">Confirm Action</h2>
+        <button class="modal-close" onclick="closeConfirmModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeConfirmModal()">Cancel</button>
+        <button class="btn-danger" id="confirmActionBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts: Storage -> Ollama -> Fallback -> API -> Modules -> Controller -->
+  <script src="js/storage.js"></script>
+  <script src="js/ollama.js"></script>
+  <script src="js/fallback.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/demo-data.js"></script>
+  <script src="js/budget.js"></script>
+  <script src="js/timeline.js"></script>
+  <script src="js/checklist.js"></script>
+  <script src="js/theme-generator.js"></script>
+  <script src="js/planner.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
