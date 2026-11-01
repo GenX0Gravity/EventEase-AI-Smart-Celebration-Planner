@@ -408,6 +408,8 @@ async function testOllamaConnection(event) {
 
   if (OllamaClient.isConnected) {
     showToast(`🟢 Connected to Ollama! Model: ${OllamaClient.currentModel}`, 'success');
+  } else if (typeof window !== 'undefined' && window.location && window.location.protocol === 'https:') {
+    showToast('🟡 Web browsers block HTTPS (Vercel) from reaching local Ollama (Mixed Content). Open http://localhost:3000 to use your local AI!', 'warning');
   } else {
     showToast('🟡 Ollama offline. Operating smoothly in Smart Planning Mode!', 'info');
   }

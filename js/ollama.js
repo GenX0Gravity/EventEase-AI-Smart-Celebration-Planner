@@ -112,12 +112,8 @@ const OllamaClient = {
 
     // Build candidate hosts to probe in order of preference
     const candidates = [];
-    const customHost = localStorage.getItem('eventease_ollama_host');
-    if (customHost) {
-      candidates.push(customHost.trim().replace(/\/+$/, ''));
-    }
 
-    // If running from web server, probe local proxy first
+    // 1. If running from local web server (e.g. port 3000), use built-in same-origin proxy first
     if (typeof window !== 'undefined' && window.location) {
       const origin = window.location.origin;
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -125,11 +121,17 @@ const OllamaClient = {
       }
     }
 
-    // Direct loopback IPv4 (Ollama on Windows binds to 127.0.0.1)
+    // 2. Custom host from user settings if provided
+    const customHost = localStorage.getItem('eventease_ollama_host');
+    if (customHost && !candidates.includes(customHost.trim().replace(/\/+$/, ''))) {
+      candidates.push(customHost.trim().replace(/\/+$/, ''));
+    }
+
+    // 3. Direct loopback IPv4 (Ollama on Windows binds to 127.0.0.1)
     if (!candidates.includes('http://127.0.0.1:11434')) {
       candidates.push('http://127.0.0.1:11434');
     }
-    // Standard localhost
+    // 4. Standard localhost
     if (!candidates.includes('http://localhost:11434')) {
       candidates.push('http://localhost:11434');
     }
@@ -141,7 +143,7 @@ const OllamaClient = {
     for (const host of candidates) {
       try {
         const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 3500);
+        const tid = setTimeout(() => controller.abort(), 5000);
         const tagsUrl = host.endsWith('/api/ollama') ? `${host}/tags` : `${host}/api/tags`;
 
         const res = await fetch(tagsUrl, {
