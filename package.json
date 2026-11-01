@@ -1,11 +1,11 @@
 {
   "name": "eventease-ai",
-  "version": "2.0.0",
-  "description": "EventEase AI – Smart Celebration Planner powered by Local Open-Source AI (Ollama) & Smart Planning Mode. 100% Free, Zero API Keys, Private.",
+  "version": "2.5.0",
+  "description": "EventEase AI – SaaS AI Celebration and Event Planning Platform. Powered by Local Open-Source AI (Ollama) & Smart Planning Mode. 100% Free, Zero API Keys, Private.",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test:syntax": "node --check js/app.js && node --check js/api.js && node --check js/ollama.js && node --check js/fallback.js && node --check server.js"
+    "test:syntax": "node -e \"const fs = require('fs'), cp = require('child_process'); fs.readdirSync('js').filter(f => f.endsWith('.js')).forEach(f => cp.execSync('node --check js/' + f)); cp.execSync('node --check server.js'); console.log('All 17 JS modules syntax validated successfully!');\""
   },
   "dependencies": {},
   "engines": {

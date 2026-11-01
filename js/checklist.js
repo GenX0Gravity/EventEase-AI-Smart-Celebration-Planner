@@ -25,18 +25,18 @@ const CATEGORY_COLORS = {
 };
 
 function loadChecklistPage() {
-  const event = Storage.getCurrentEvent();
+  const event = Storage.getActiveEvent();
   const emptyEl = document.getElementById('checklistEmpty');
   const contentEl = document.getElementById('checklistContent');
 
   if (!event) {
-    emptyEl.style.display = 'block';
-    contentEl.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'block';
+    if (contentEl) contentEl.style.display = 'none';
     return;
   }
 
-  emptyEl.style.display = 'none';
-  contentEl.style.display = 'block';
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (contentEl) contentEl.style.display = 'block';
 
   let checklist = Storage.getChecklist(event.id);
   if (!checklist) {

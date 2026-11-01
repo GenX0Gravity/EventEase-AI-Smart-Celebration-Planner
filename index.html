@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EventEase AI – Smart Celebration Planner</title>
-  <meta name="description" content="Free, open-source AI-powered event planning for weddings, birthdays, anniversaries, and community celebrations using Local Ollama and Smart Planning." />
+  <meta name="description" content="Production-ready, free, and open-source AI event planning platform for weddings, birthdays, anniversaries, and community celebrations with local Ollama AI and Smart Planning Mode." />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
+  <!-- ==================== SIDEBAR NAVIGATION ==================== -->
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="logo">
@@ -30,26 +30,38 @@
       </button>
     </div>
 
-    <div class="sidebar-user" id="sidebarUser" style="display:none;">
+    <!-- User Profile Badge -->
+    <div class="sidebar-user" id="sidebarUser" onclick="openProfileModal()" style="cursor:pointer;" title="Edit Profile & Preferences">
       <div class="user-avatar" id="userAvatar">E</div>
       <div class="user-info">
-        <div class="user-name" id="userName">Event Planner</div>
-        <div class="user-subtitle">Local AI Powered</div>
+        <div class="user-name" id="userName">Celebration Host</div>
+        <div class="user-subtitle" id="userSubtitle">Event Organizer</div>
       </div>
+      <i data-lucide="settings" style="width:16px;height:16px;margin-left:auto;color:var(--gray-400);"></i>
     </div>
 
+    <!-- Navigation Links -->
     <ul class="nav-links">
       <li><a href="#" class="nav-link active" data-page="dashboard">
         <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
       </a></li>
       <li><a href="#" class="nav-link" data-page="create-event">
-        <i data-lucide="calendar-plus"></i><span>Create Event</span>
+        <i data-lucide="calendar-plus"></i><span>Event Wizard</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="copilot">
+        <i data-lucide="sparkles"></i><span>EventEase Copilot</span>
       </a></li>
       <li><a href="#" class="nav-link" data-page="ai-planner">
-        <i data-lucide="brain-circuit"></i><span>AI Planner</span>
+        <i data-lucide="brain-circuit"></i><span>AI Event Plan</span>
       </a></li>
       <li><a href="#" class="nav-link" data-page="budget">
-        <i data-lucide="wallet"></i><span>Budget Planner</span>
+        <i data-lucide="wallet"></i><span>Budget & Expenses</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="guests">
+        <i data-lucide="users"></i><span>Guests & Seating</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="vendors">
+        <i data-lucide="briefcase"></i><span>Vendor Directory</span>
       </a></li>
       <li><a href="#" class="nav-link" data-page="timeline">
         <i data-lucide="clock"></i><span>Event Timeline</span>
@@ -58,10 +70,25 @@
         <i data-lucide="list-checks"></i><span>Vendor Checklist</span>
       </a></li>
       <li><a href="#" class="nav-link" data-page="theme-generator">
-        <i data-lucide="wand-2"></i><span>Theme Generator</span>
+        <i data-lucide="palette"></i><span>Theme Studio</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="invitations">
+        <i data-lucide="mail"></i><span>Invitation Studio</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="event-day">
+        <i data-lucide="play-circle"></i><span>Day-Of Mode</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="idea-generator">
+        <i data-lucide="lightbulb"></i><span>Idea Studio</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="analytics">
+        <i data-lucide="bar-chart-3"></i><span>Reports & Analytics</span>
       </a></li>
       <li><a href="#" class="nav-link" data-page="my-events">
         <i data-lucide="folder-heart"></i><span>My Events</span>
+      </a></li>
+      <li><a href="#" class="nav-link" data-page="settings">
+        <i data-lucide="sliders"></i><span>Settings & Backup</span>
       </a></li>
     </ul>
 
@@ -75,17 +102,19 @@
   <!-- Sidebar Overlay -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Main Content -->
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
   <main class="main-content" id="mainContent">
-    <!-- Top Bar -->
+    <!-- Topbar -->
     <header class="topbar">
       <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">
         <i data-lucide="menu"></i>
       </button>
       <div class="topbar-title" id="topbarTitle">Dashboard</div>
+
       <div class="topbar-actions">
-        <div class="event-selector-wrap" id="eventSelectorWrap" style="display:none;">
-          <select id="eventSelectorTop" class="event-selector-top">
+        <!-- Event Switcher Dropdown -->
+        <div class="event-selector-wrap" id="eventSelectorWrap">
+          <select id="eventSelectorTop" class="event-selector-top" title="Switch Active Event">
             <option value="">Select Event</option>
           </select>
         </div>
@@ -96,728 +125,1403 @@
           <span class="status-label" id="aiStatusLabel">Checking AI…</span>
         </div>
 
-        <!-- Test Connection Button -->
+        <!-- Ping Ollama Connection -->
         <button class="btn-icon" id="btnTestConnection" onclick="testOllamaConnection(event)" title="Test Ollama Connection">
           <i data-lucide="refresh-cw"></i>
         </button>
 
-        <button class="btn-primary-sm" onclick="navigateTo('create-event')">
+        <!-- In-App Notification Center Bell -->
+        <div class="notifications-wrap">
+          <button class="btn-notifications" id="btnNotificationsBell" title="Notifications">
+            <i data-lucide="bell"></i>
+            <span class="notif-badge-pill" id="notificationsBadgeCount" style="display:none;">0</span>
+          </button>
+          <!-- Notifications Dropdown Flyout -->
+          <div class="notifications-flyout" id="notificationsFlyout">
+            <div class="notif-header">
+              <h4><i data-lucide="bell"></i> Notifications</h4>
+              <button class="btn-text-sm" id="btnMarkAllNotificationsRead">Mark Read</button>
+            </div>
+            <div class="notif-list" id="notificationsList">
+              <!-- Dynamically populated -->
+            </div>
+            <div class="notif-footer">
+              <button class="btn-text-sm" id="btnClearAllNotifications">Clear All</button>
+              <button class="btn-text-sm" onclick="Notifications.closeFlyout(); navigateTo('timeline');">View Timeline</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dark / Light Theme Toggle -->
+        <button class="btn-icon" id="btnThemeToggle" title="Toggle Dark/Light Mode">
+          <i data-lucide="moon" id="themeToggleIcon"></i>
+        </button>
+
+        <!-- Profile Avatar Button -->
+        <button class="btn-icon user-avatar-btn" id="btnProfileTop" title="User Profile & Currency">
+          <span id="userAvatarTop">E</span>
+        </button>
+
+        <!-- Quick New Event Action -->
+        <button class="btn-primary-sm" onclick="Wizard.startNewEvent(); navigateTo('create-event');">
           <i data-lucide="plus"></i><span>New Event</span>
         </button>
       </div>
     </header>
 
-    <!-- Pages -->
+    <!-- Pages Container -->
     <div class="page-container">
 
-      <!-- ===================== DASHBOARD PAGE ===================== -->
+      <!-- ==================== 1. DASHBOARD PAGE ==================== -->
       <section class="page active" id="page-dashboard">
-        <!-- Hero Section -->
-        <div class="hero-section">
+        <!-- Active Event Spotlight Banner (Rendered dynamically) -->
+        <div id="dashboardSpotlightContainer"></div>
+
+        <!-- 6 Core SaaS Metrics Cards -->
+        <div class="metrics-grid" id="dashboardMetricsGrid"></div>
+
+        <!-- Dashboard Charts Row -->
+        <div class="dashboard-charts-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;margin-bottom:28px;">
+          <div class="card" style="padding:22px;">
+            <div class="card-header" style="margin-bottom:14px;">
+              <h3 style="font-size:16px;font-weight:700;"><i data-lucide="bar-chart-2"></i> Budget: Allocated vs Actual</h3>
+            </div>
+            <canvas id="dashBudgetOverviewChart" style="max-height:260px;"></canvas>
+          </div>
+          <div class="card" style="padding:22px;">
+            <div class="card-header" style="margin-bottom:14px;">
+              <h3 style="font-size:16px;font-weight:700;"><i data-lucide="pie-chart"></i> Guest RSVP Distribution</h3>
+            </div>
+            <canvas id="dashCategoryChart" style="max-height:260px;"></canvas>
+          </div>
+        </div>
+
+        <!-- Upcoming Deadlines & Recent Activity Feed -->
+        <div class="dashboard-bottom-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;margin-bottom:40px;">
+          <div class="card" style="padding:22px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <h3 style="font-size:15px;font-weight:700;"><i data-lucide="check-square"></i> Upcoming Task Deadlines</h3>
+              <button class="btn-text-sm" onclick="navigateTo('timeline')">View Timeline →</button>
+            </div>
+            <div id="dashboardActivityList"></div>
+          </div>
+          <div class="card" style="padding:22px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <h3 style="font-size:15px;font-weight:700;"><i data-lucide="sparkles"></i> Quick Smart Tools</h3>
+              <span class="badge-pill badge-smart">Instant AI</span>
+            </div>
+            <div class="quick-tools-list" style="display:flex;flex-direction:column;gap:10px;">
+              <div class="quick-tool-item" onclick="navigateTo('copilot')" style="padding:12px;background:var(--purple-50);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:var(--purple-600);color:white;display:flex;align-items:center;justify-content:center;"><i data-lucide="message-square"></i></div>
+                <div>
+                  <strong>Chat with EventEase Copilot</strong>
+                  <div style="font-size:12px;color:var(--gray-500);">Ask questions, get decor ideas, or reduce catering costs</div>
+                </div>
+              </div>
+              <div class="quick-tool-item" onclick="navigateTo('invitations')" style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:#ec4899;color:white;display:flex;align-items:center;justify-content:center;"><i data-lucide="mail"></i></div>
+                <div>
+                  <strong>Invitation Studio</strong>
+                  <div style="font-size:12px;color:var(--gray-500);">Design & export stunning WhatsApp / PNG invitations</div>
+                </div>
+              </div>
+              <div class="quick-tool-item" onclick="navigateTo('event-day')" style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:#10b981;color:white;display:flex;align-items:center;justify-content:center;"><i data-lucide="play-circle"></i></div>
+                <div>
+                  <strong>Day-Of Command Center</strong>
+                  <div style="font-size:12px;color:var(--gray-500);">Live schedule, vendor speed dial, emergency checklists</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fallback Hero (Shown only when zero events exist) -->
+        <div class="hero-section" id="dashboardHeroSection" style="display:none;">
           <div class="hero-content">
             <div class="hero-badge">
               <i data-lucide="sparkles"></i>
-              <span>100% Free · Local AI & Smart Planning</span>
+              <span>100% Free · Local AI &amp; Smart Planning</span>
             </div>
             <h1 class="hero-title">Plan Less.<br /><span class="gradient-text">Celebrate More.</span></h1>
             <p class="hero-desc">
-              EventEase AI transforms your celebration into reality — completely free with zero API keys. Powered by local open-source models (Ollama) with instant rule-based Smart Planning fallback.
+              Transform your celebration into reality with intelligent budgets, timelines, checklists, and local open-source AI inference.
             </p>
             <div class="hero-cta">
-              <button class="btn-primary" onclick="navigateTo('create-event')">
-                <i data-lucide="rocket"></i>
-                Start Planning
+              <button class="btn-primary" onclick="Wizard.startNewEvent(); navigateTo('create-event');">
+                <i data-lucide="rocket"></i> Start Planning
               </button>
-              <button class="btn-outline" onclick="loadDemoEvent()">
-                <i data-lucide="eye"></i>
-                See Demo
+              <button class="btn-outline" onclick="loadDemoCelebration()">
+                <i data-lucide="eye"></i> See Demo Celebration
               </button>
             </div>
-            <div class="hero-stats">
-              <div class="stat"><span class="stat-num">Free</span><span class="stat-label">No API Keys Required</span></div>
-              <div class="stat-divider"></div>
-              <div class="stat"><span class="stat-num" id="heroModelName">Ollama</span><span class="stat-label">Local & Private AI</span></div>
-              <div class="stat-divider"></div>
-              <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Offline Capable</span></div>
-            </div>
-          </div>
-          <div class="hero-visual">
-            <div class="hero-card floating" style="top:0;right:40px;">
-              <div class="mini-card-icon" style="background:linear-gradient(135deg,#a78bfa,#ec4899)"><i data-lucide="wedding-ring" style="color:white"></i></div>
-              <div>
-                <div class="mini-card-title">Wedding Planning</div>
-                <div class="mini-card-sub">AI plan ready · Free</div>
-              </div>
-            </div>
-            <div class="hero-card floating delay-1" style="top:120px;right:-20px;">
-              <div class="mini-card-icon" style="background:linear-gradient(135deg,#f59e0b,#f97316)"><i data-lucide="cake" style="color:white"></i></div>
-              <div>
-                <div class="mini-card-title">Birthday Party</div>
-                <div class="mini-card-sub">Smart budget balanced ✓</div>
-              </div>
-            </div>
-            <div class="hero-card floating delay-2" style="top:240px;right:20px;">
-              <div class="mini-card-icon" style="background:linear-gradient(135deg,#06b6d4,#3b82f6)"><i data-lucide="heart" style="color:white"></i></div>
-              <div>
-                <div class="mini-card-title">Anniversary</div>
-                <div class="mini-card-sub">Timeline scheduled ✓</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Feature Cards -->
-        <div class="section-header">
-          <h2>Everything You Need</h2>
-          <p>All your celebration planning tools in one intelligent, private platform</p>
-        </div>
-        <div class="features-grid">
-          <div class="feature-card" onclick="navigateTo('ai-planner')">
-            <div class="feature-icon" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)">
-              <i data-lucide="brain-circuit"></i>
-            </div>
-            <h3>AI Event Planner</h3>
-            <p>Comprehensive event plan including themes, decorations, entertainment, and catering suggestions tailored to your preferences.</p>
-            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
-          </div>
-          <div class="feature-card" onclick="navigateTo('budget')">
-            <div class="feature-icon" style="background:linear-gradient(135deg,#10b981,#059669)">
-              <i data-lucide="wallet"></i>
-            </div>
-            <h3>Smart Budget Planner</h3>
-            <p>Intelligent budget allocation across all event categories. Visual charts show exactly where every rupee goes.</p>
-            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
-          </div>
-          <div class="feature-card" onclick="navigateTo('timeline')">
-            <div class="feature-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
-              <i data-lucide="clock"></i>
-            </div>
-            <h3>Event Timeline</h3>
-            <p>Never miss a deadline. Track preparation milestones with smart task management from booking to the big day.</p>
-            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
-          </div>
-          <div class="feature-card" onclick="navigateTo('checklist')">
-            <div class="feature-icon" style="background:linear-gradient(135deg,#ec4899,#be185d)">
-              <i data-lucide="list-checks"></i>
-            </div>
-            <h3>Vendor Checklist</h3>
-            <p>Keep track of all vendors and tasks. Generate with AI, add custom items, and mark them complete as you make progress.</p>
-            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
-          </div>
-          <div class="feature-card" onclick="navigateTo('theme-generator')">
-            <div class="feature-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">
-              <i data-lucide="wand-2"></i>
-            </div>
-            <h3>Theme Generator</h3>
-            <p>Discover beautiful themes, color palettes, and unique experience ideas powered by AI creativity and smart design.</p>
-            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
-          </div>
-          <div class="feature-card" onclick="navigateTo('my-events')">
-            <div class="feature-icon" style="background:linear-gradient(135deg,#f43f5e,#e11d48)">
-              <i data-lucide="folder-heart"></i>
-            </div>
-            <h3>My Events</h3>
-            <p>All your events saved locally. Revisit, edit, and track the progress of every celebration you're planning.</p>
-            <span class="feature-link">Explore <i data-lucide="arrow-right"></i></span>
-          </div>
-        </div>
-
-        <!-- Recent Events Preview -->
-        <div class="section-header" style="margin-top:40px;">
-          <h2>Recent Events</h2>
-          <button class="btn-ghost-sm" onclick="navigateTo('my-events')">View All</button>
-        </div>
-        <div id="dashboardRecentEvents" class="recent-events-grid">
-          <div class="empty-state-small">
-            <i data-lucide="calendar"></i>
-            <p>No events yet. <a href="#" onclick="navigateTo('create-event');return false;">Create your first event →</a></p>
           </div>
         </div>
       </section>
 
-      <!-- ===================== CREATE EVENT PAGE ===================== -->
+      <!-- ==================== 2. EVENT CREATION WIZARD ==================== -->
       <section class="page" id="page-create-event">
-        <div class="page-header">
-          <h1>Create New Event</h1>
-          <p>Tell us about your event and our AI will craft the perfect plan</p>
+        <div class="page-header" style="text-align:center;max-width:720px;margin:0 auto 24px auto;">
+          <h1 id="wizardTitle">Create New Event</h1>
+          <p>Complete 5 quick steps to receive your comprehensive AI celebration plan.</p>
         </div>
 
-        <div class="form-layout">
-          <div class="form-card">
-            <form id="eventForm" novalidate>
-              <div class="form-grid">
-                <!-- Event Name -->
-                <div class="form-group full-width">
-                  <label class="form-label" for="eventName">
-                    <i data-lucide="type"></i> Event Name *
-                  </label>
-                  <input type="text" id="eventName" name="eventName" class="form-input"
-                    placeholder="e.g., Sarah & John's Wedding, Emma's 30th Birthday…" required maxlength="100" />
-                  <div class="error-msg" id="eventNameError"></div>
-                </div>
-
-                <!-- Event Type -->
-                <div class="form-group">
-                  <label class="form-label" for="eventType">
-                    <i data-lucide="tag"></i> Event Type *
-                  </label>
-                  <select id="eventType" name="eventType" class="form-input" required>
-                    <option value="">Select event type…</option>
-                    <option value="Wedding">💍 Wedding</option>
-                    <option value="Birthday">🎂 Birthday</option>
-                    <option value="Anniversary">❤️ Anniversary</option>
-                    <option value="Community Event">🎉 Community Event</option>
-                    <option value="Corporate Event">🏢 Corporate Event</option>
-                    <option value="Baby Shower">👶 Baby Shower</option>
-                    <option value="Graduation">🎓 Graduation Party</option>
-                  </select>
-                  <div class="error-msg" id="eventTypeError"></div>
-                </div>
-
-                <!-- Event Date -->
-                <div class="form-group">
-                  <label class="form-label" for="eventDate">
-                    <i data-lucide="calendar"></i> Event Date *
-                  </label>
-                  <input type="date" id="eventDate" name="eventDate" class="form-input" required />
-                  <div class="error-msg" id="eventDateError"></div>
-                </div>
-
-                <!-- Event Location -->
-                <div class="form-group">
-                  <label class="form-label" for="eventLocation">
-                    <i data-lucide="map-pin"></i> Event Location *
-                  </label>
-                  <input type="text" id="eventLocation" name="eventLocation" class="form-input"
-                    placeholder="City, Venue, or Address" required maxlength="150" />
-                  <div class="error-msg" id="eventLocationError"></div>
-                </div>
-
-                <!-- Number of Guests -->
-                <div class="form-group">
-                  <label class="form-label" for="guestCount">
-                    <i data-lucide="users"></i> Number of Guests *
-                  </label>
-                  <input type="number" id="guestCount" name="guestCount" class="form-input"
-                    placeholder="e.g., 150" min="1" max="10000" required />
-                  <div class="error-msg" id="guestCountError"></div>
-                </div>
-
-                <!-- Total Budget -->
-                <div class="form-group">
-                  <label class="form-label" for="totalBudget">
-                    <i data-lucide="indian-rupee"></i> Total Budget (₹) *
-                  </label>
-                  <input type="number" id="totalBudget" name="totalBudget" class="form-input"
-                    placeholder="e.g., 500000" min="1000" required />
-                  <div class="error-msg" id="totalBudgetError"></div>
-                </div>
-
-                <!-- Theme/Style -->
-                <div class="form-group">
-                  <label class="form-label" for="eventTheme">
-                    <i data-lucide="palette"></i> Preferred Theme / Style
-                  </label>
-                  <input type="text" id="eventTheme" name="eventTheme" class="form-input"
-                    placeholder="e.g., Royal, Boho, Modern, Rustic, Garden…" maxlength="100" />
-                </div>
-
-                <!-- Cuisine Preference -->
-                <div class="form-group">
-                  <label class="form-label" for="cuisinePreference">
-                    <i data-lucide="utensils"></i> Cuisine Preference
-                  </label>
-                  <select id="cuisinePreference" name="cuisinePreference" class="form-input">
-                    <option value="">Any cuisine</option>
-                    <option value="Indian">Indian</option>
-                    <option value="Continental">Continental</option>
-                    <option value="Mixed/Buffet">Mixed / Buffet</option>
-                    <option value="Vegetarian">Vegetarian Only</option>
-                    <option value="Vegan">Vegan</option>
-                    <option value="International">International</option>
-                  </select>
-                </div>
-
-                <!-- Additional Requirements -->
-                <div class="form-group full-width">
-                  <label class="form-label" for="additionalReqs">
-                    <i data-lucide="message-square"></i> Additional Requirements
-                  </label>
-                  <textarea id="additionalReqs" name="additionalReqs" class="form-input form-textarea"
-                    placeholder="Any special requests, accessibility needs, cultural traditions, dietary restrictions, entertainment preferences…"
-                    rows="4" maxlength="500"></textarea>
-                  <div class="char-count"><span id="reqsCharCount">0</span>/500</div>
-                </div>
-              </div>
-
-              <div class="form-actions">
-                <button type="button" class="btn-outline" onclick="loadDemoEvent()">
-                  <i data-lucide="zap"></i> Load Demo Data
-                </button>
-                <button type="button" class="btn-ghost" onclick="clearForm()">
-                  <i data-lucide="trash-2"></i> Clear
-                </button>
-                <button type="submit" class="btn-primary" id="generateBtn">
-                  <i data-lucide="brain-circuit"></i> Generate AI Plan
-                </button>
-              </div>
-            </form>
+        <div class="wizard-container">
+          <!-- Wizard Stepper Header -->
+          <div class="wizard-progress-bar">
+            <div class="wizard-progress-fill" id="wizardProgressFill"></div>
+          </div>
+          <div class="wizard-steps-header">
+            <div class="wizard-step-pill active" data-step="1">
+              <span class="step-num-circle">1</span>
+              <span class="step-title-text">Basics</span>
+            </div>
+            <div class="wizard-step-pill" data-step="2">
+              <span class="step-num-circle">2</span>
+              <span class="step-title-text">Guests</span>
+            </div>
+            <div class="wizard-step-pill" data-step="3">
+              <span class="step-num-circle">3</span>
+              <span class="step-title-text">Budget</span>
+            </div>
+            <div class="wizard-step-pill" data-step="4">
+              <span class="step-num-circle">4</span>
+              <span class="step-title-text">Style</span>
+            </div>
+            <div class="wizard-step-pill" data-step="5">
+              <span class="step-num-circle">5</span>
+              <span class="step-title-text">Requirements</span>
+            </div>
           </div>
 
-          <div class="form-sidebar">
-            <div class="tip-card">
-              <div class="tip-icon"><i data-lucide="lightbulb"></i></div>
-              <h3>Pro Tips</h3>
-              <ul>
-                <li>Be specific about your theme for better suggestions</li>
-                <li>Include dietary restrictions in additional requirements</li>
-                <li>Mention cultural traditions for personalized advice</li>
-                <li>Set a realistic budget for accurate planning</li>
-              </ul>
+          <!-- Wizard Form Container -->
+          <form id="eventWizardForm" onsubmit="return false;">
+            <!-- Step 1: Basic Details -->
+            <div class="wizard-step-pane" id="wizardStep1">
+              <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;">Step 1: Basic Event Details</h3>
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label>Event Name *</label>
+                  <input type="text" id="wEventName" placeholder="e.g. Maya &amp; Aarav's Wedding, Rohan's 30th Birthday" required />
+                </div>
+                <div class="form-group">
+                  <label>Event Type *</label>
+                  <select id="wEventType" required>
+                    <option value="Wedding">Wedding</option>
+                    <option value="Birthday">Birthday Party</option>
+                    <option value="Anniversary">Anniversary</option>
+                    <option value="Community Event">Community Event / Festival</option>
+                    <option value="Corporate Event">Corporate Event / Gala</option>
+                    <option value="Baby Shower">Baby Shower</option>
+                    <option value="Graduation">Graduation Celebration</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Event Date *</label>
+                  <input type="date" id="wEventDate" required />
+                </div>
+                <div class="form-group">
+                  <label>Start Time</label>
+                  <input type="time" id="wStartTime" value="10:00" />
+                </div>
+                <div class="form-group">
+                  <label>End Time</label>
+                  <input type="time" id="wEndTime" value="22:00" />
+                </div>
+                <div class="form-group">
+                  <label>Venue / Location *</label>
+                  <input type="text" id="wEventLocation" placeholder="e.g. The Grand Palace, Jaipur or Central City Park" required />
+                </div>
+                <div class="form-group">
+                  <label>Venue Type</label>
+                  <select id="wVenueType">
+                    <option value="Indoor Banquet">Indoor Banquet Hall</option>
+                    <option value="Outdoor Lawn">Outdoor Lawn / Garden</option>
+                    <option value="Indoor & Outdoor">Indoor &amp; Outdoor Courtyard</option>
+                    <option value="Beachfront / Resort">Beachfront / Resort</option>
+                    <option value="Private Home">Private Residence</option>
+                  </select>
+                </div>
+              </div>
             </div>
-            <div class="event-type-info" id="eventTypeInfo" style="display:none;">
-              <div id="eventTypeContent"></div>
+
+            <!-- Step 2: Guest Details -->
+            <div class="wizard-step-pane" id="wizardStep2" style="display:none;">
+              <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;">Step 2: Guest Details &amp; Attendance</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Expected Total Guests *</label>
+                  <input type="number" id="wEventGuests" placeholder="e.g. 150" min="1" required />
+                </div>
+                <div class="form-group">
+                  <label>Adults Count</label>
+                  <input type="number" id="wAdultsCount" placeholder="e.g. 120" min="0" />
+                </div>
+                <div class="form-group">
+                  <label>Children Count</label>
+                  <input type="number" id="wChildrenCount" placeholder="e.g. 30" min="0" />
+                </div>
+                <div class="form-group">
+                  <label>VIP / Dignitary Guests</label>
+                  <input type="number" id="wVipCount" placeholder="e.g. 15" min="0" />
+                </div>
+                <div class="form-group full-width">
+                  <label>Guest Accommodation &amp; Special Requirements</label>
+                  <textarea id="wGuestRequirements" rows="2" placeholder="e.g. 20 outstation family members needing hotel shuttle, wheelchair accessibility for grandparents"></textarea>
+                </div>
+              </div>
             </div>
+
+            <!-- Step 3: Budget Management -->
+            <div class="wizard-step-pane" id="wizardStep3" style="display:none;">
+              <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;">Step 3: Budget &amp; Currency</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Total Available Budget *</label>
+                  <input type="number" id="wEventBudget" placeholder="e.g. 500000" min="1000" required />
+                </div>
+                <div class="form-group">
+                  <label>Currency</label>
+                  <select id="wCurrency">
+                    <option value="INR">₹ INR (Indian Rupee)</option>
+                    <option value="USD">$ USD (US Dollar)</option>
+                    <option value="EUR">€ EUR (Euro)</option>
+                    <option value="GBP">£ GBP (British Pound)</option>
+                    <option value="AUD">A$ AUD (Australian Dollar)</option>
+                    <option value="CAD">C$ CAD (Canadian Dollar)</option>
+                  </select>
+                </div>
+                <div class="form-group full-width">
+                  <label>Budget Flexibility</label>
+                  <select id="wFlexibility">
+                    <option value="Flexible">Flexible (±15% for high-impact experiences)</option>
+                    <option value="Strict">Strict Ceiling (Do not exceed allocated total)</option>
+                    <option value="Ballpark">Ballpark Estimate (Seeking optimal savings)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4: Style & Preferences -->
+            <div class="wizard-step-pane" id="wizardStep4" style="display:none;">
+              <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;">Step 4: Style, Themes &amp; Ambiance</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Preferred Celebration Theme</label>
+                  <input type="text" id="wTheme" placeholder="e.g. Royal Rajasthani, Bohemian Chic, Modern Minimalist" />
+                </div>
+                <div class="form-group">
+                  <label>Color Palette Preference</label>
+                  <input type="text" id="wColorPalette" placeholder="e.g. Crimson &amp; Palace Gold, Lavender &amp; Blush, Sage Green" />
+                </div>
+                <div class="form-group">
+                  <label>Celebration Formality</label>
+                  <select id="wStyle">
+                    <option value="Formal">Formal / Traditional</option>
+                    <option value="Semi-Formal">Semi-Formal Festive</option>
+                    <option value="Casual">Casual / Laid-Back</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Food &amp; Catering Preference</label>
+                  <input type="text" id="wFoodPreference" placeholder="e.g. Multi-cuisine buffet with live Chaat &amp; Dessert counters" />
+                </div>
+                <div class="form-group full-width">
+                  <label>Entertainment Preferences</label>
+                  <input type="text" id="wEntertainment" placeholder="e.g. Folk musicians, acoustic duo, high-energy evening DJ, interactive games" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 5: Additional Requirements -->
+            <div class="wizard-step-pane" id="wizardStep5" style="display:none;">
+              <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;">Step 5: Cultural, Dietary &amp; Special Needs</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Cultural / Religious Nuances</label>
+                  <input type="text" id="wCulturalPreferences" placeholder="e.g. Traditional Vedic rituals, Jain food live counter, Sangeet choreography" />
+                </div>
+                <div class="form-group">
+                  <label>Accessibility Requirements</label>
+                  <input type="text" id="wAccessibility" placeholder="e.g. Ramp access to stage, shaded seating near restrooms" />
+                </div>
+                <div class="form-group full-width">
+                  <label>Special Instructions &amp; Must-Have Moments</label>
+                  <textarea id="wSpecialInstructions" rows="3" placeholder="e.g. Surprise fireworks at midnight, grandfather's toast at 8 PM, sparkler send-off tunnel"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Wizard Navigation Footer -->
+            <div class="wizard-footer-nav">
+              <button type="button" class="btn-ghost" id="wizardBtnPrev">
+                <i data-lucide="arrow-left"></i> Previous
+              </button>
+              <button type="button" class="btn-primary" id="wizardBtnNext">
+                Next Step <i data-lucide="arrow-right"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ==================== 3. EVENTEASE COPILOT ==================== -->
+      <section class="page" id="page-copilot">
+        <div class="copilot-container">
+          <div class="copilot-header">
+            <div class="copilot-header-info">
+              <div class="copilot-header-avatar">
+                <i data-lucide="sparkles"></i>
+              </div>
+              <div>
+                <h3 style="font-size:16px;font-weight:700;margin:0;">EventEase Copilot</h3>
+                <span style="font-size:12px;color:var(--gray-500);">Interactive Celebration &amp; Budget Optimization Assistant</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span id="copilotModelBadge" class="badge badge-smart">Smart Planning Mode</span>
+              <button class="btn-ghost-sm" id="copilotClearBtn" title="Clear Chat History">
+                <i data-lucide="trash-2"></i> Clear
+              </button>
+            </div>
+          </div>
+
+          <div class="copilot-messages" id="copilotMessages">
+            <!-- Messages populated via Copilot.renderChatHistory() -->
+          </div>
+
+          <div class="copilot-input-area">
+            <input type="text" class="copilot-input" id="copilotInput" placeholder="Ask anything: e.g. How to cut catering costs by 20%? Suggest decor for 100 guests..." />
+            <button class="btn-primary" id="copilotSendBtn">
+              <i data-lucide="send"></i>
+            </button>
           </div>
         </div>
       </section>
 
-      <!-- ===================== AI PLANNER PAGE ===================== -->
+      <!-- ==================== 4. AI EVENT PLANNER ==================== -->
       <section class="page" id="page-ai-planner">
-        <div class="page-header">
-          <div class="page-header-flex">
-            <div>
-              <h1><i data-lucide="brain-circuit"></i> AI Event Planner</h1>
-              <p>Personalized event plan powered by Local AI or Smart Planning Mode</p>
-            </div>
-            <div class="planner-toolbar-controls">
-              <label for="plannerModelSelect" class="toolbar-label"><i data-lucide="cpu"></i> Model:</label>
-              <select id="plannerModelSelect" class="form-input-sm planner-model-select" onchange="onPlannerModelChange(this.value)">
-                <option value="qwen2.5:3b">qwen2.5:3b (Recommended)</option>
-                <option value="llama3.2:3b">llama3.2:3b (Balanced)</option>
-                <option value="gemma3:1b">gemma3:1b (Fastest)</option>
-                <option value="smart-only">Smart Planning Mode (Rule-Based)</option>
-              </select>
-            </div>
+        <div class="planner-toolbar" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+          <div>
+            <h1 style="font-size:24px;font-weight:800;">AI Celebration Dossier</h1>
+            <p style="font-size:13px;color:var(--gray-500);">Personalized strategy, themes, decor, and catering blueprints</p>
           </div>
-        </div>
-
-        <div id="plannerEmpty" class="empty-state">
-          <div class="empty-icon"><i data-lucide="brain-circuit"></i></div>
-          <h2>No Plan Generated Yet</h2>
-          <p>Create an event first, then generate your personalized celebration plan</p>
-          <button class="btn-primary" onclick="navigateTo('create-event')">
-            <i data-lucide="plus"></i> Create Event
-          </button>
-        </div>
-
-        <div id="plannerContent" style="display:none;">
-          <div class="planner-event-info" id="plannerEventInfo"></div>
-
-          <div class="planner-actions">
-            <button class="btn-primary" id="generatePlanBtn" onclick="generateEventPlan()">
-              <i data-lucide="sparkles"></i> Generate Again
-            </button>
-            <button class="btn-outline" id="copyPlanBtn" onclick="copyPlanToClipboard()">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <button class="btn-outline-sm" onclick="copyPlanToClipboard()">
               <i data-lucide="copy"></i> Copy Plan
             </button>
-            <button class="btn-outline" id="downloadPlanBtn" onclick="exportPlan()">
-              <i data-lucide="download"></i> Download Event Plan
+            <button class="btn-outline-sm" onclick="exportPlan()">
+              <i data-lucide="download"></i> Download Brief
+            </button>
+            <button class="btn-primary-sm" id="btnGeneratePlan" onclick="generateEventPlan()">
+              <i data-lucide="sparkles"></i> Regenerate Plan
             </button>
           </div>
+        </div>
 
-          <!-- Mode badge: Local AI vs Smart Planning Mode -->
-          <div id="plannerModeBadge" class="mode-badge-wrap" style="display:none;"></div>
+        <div id="plannerLoading" style="display:none;text-align:center;padding:60px;">
+          <div class="spin-icon" style="font-size:32px;color:var(--purple-600);"><i data-lucide="loader-2"></i></div>
+          <h3 style="margin-top:16px;">Generating Your Event Blueprint…</h3>
+          <p style="color:var(--gray-500);">Synthesizing themes, catering menus, decor concepts, and guest tips</p>
+        </div>
 
-          <div id="plannerLoading" class="loading-container" style="display:none;">
-            <div class="ai-loader">
-              <div class="ai-loader-ring"></div>
-              <i data-lucide="brain-circuit" class="ai-loader-icon"></i>
-            </div>
-            <p class="loading-text">Crafting your perfect event plan…</p>
-            <div class="loading-steps">
-              <div class="loading-step active" id="lstep1">Analyzing event details & budget</div>
-              <div class="loading-step" id="lstep2">Generating creative themes & decor</div>
-              <div class="loading-step" id="lstep3">Optimizing catering & entertainment</div>
-              <div class="loading-step" id="lstep4">Finalizing personalized suggestions</div>
-            </div>
-          </div>
-
-          <div id="planResults" style="display:none;">
-            <div class="plan-grid" id="planGrid"></div>
-          </div>
+        <div id="plannerModeBadge" style="display:none;margin-bottom:16px;"></div>
+        <div id="planResults">
+          <div id="planGrid" class="plan-grid"></div>
         </div>
       </section>
 
-      <!-- ===================== BUDGET PLANNER PAGE ===================== -->
+      <!-- ==================== 5. BUDGET & EXPENSES ==================== -->
       <section class="page" id="page-budget">
-        <div class="page-header">
-          <h1><i data-lucide="wallet"></i> Smart Budget Planner</h1>
-          <p>See exactly how your budget is allocated across all categories</p>
-        </div>
-
-        <div id="budgetEmpty" class="empty-state">
-          <div class="empty-icon"><i data-lucide="wallet"></i></div>
-          <h2>No Budget Plan Yet</h2>
-          <p>Create an event to generate your smart budget breakdown</p>
-          <button class="btn-primary" onclick="navigateTo('create-event')">
-            <i data-lucide="plus"></i> Create Event
-          </button>
-        </div>
-
-        <div id="budgetContent" style="display:none;">
-          <div class="budget-overview" id="budgetOverview"></div>
-
-          <div class="budget-actions">
-            <button class="btn-primary" id="btnGenerateBudget" onclick="generateBudgetBreakdown()">
-              <i data-lucide="sparkles"></i> Generate Again
+        <div class="section-header-row" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+          <div>
+            <h1 style="font-size:24px;font-weight:800;">Smart Budget &amp; Expense Management</h1>
+            <p style="font-size:13px;color:var(--gray-500);">Track planned allocations vs real-world payments with overspending warnings</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-primary-sm" onclick="openExpenseModal()">
+              <i data-lucide="plus"></i> Log Expense
             </button>
-            <div id="budgetModeBadge" class="mode-badge-wrap" style="display:none;"></div>
+            <button class="btn-outline-sm" onclick="exportExpensesCSV()">
+              <i data-lucide="download"></i> Export CSV
+            </button>
+            <button class="btn-outline-sm" id="btnGenerateBudget" onclick="generateBudgetBreakdown()">
+              <i data-lucide="sparkles"></i> Re-Optimize
+            </button>
           </div>
+        </div>
 
-          <div id="budgetLoading" class="loading-container" style="display:none;">
-            <div class="ai-loader"><div class="ai-loader-ring"></div><i data-lucide="wallet" class="ai-loader-icon"></i></div>
-            <p class="loading-text">Optimizing your budget allocation…</p>
-          </div>
+        <div id="budgetEmpty" style="display:none;" class="empty-state">
+          <i data-lucide="wallet"></i>
+          <h3>No Active Event Selected</h3>
+          <p>Create or select an event to view smart budget management.</p>
+          <button class="btn-primary" onclick="navigateTo('create-event')">Create Event</button>
+        </div>
 
-          <div id="budgetResults" style="display:none;">
-            <div class="budget-layout">
-              <div class="budget-bars-section">
-                <h3>Budget Breakdown</h3>
-                <div id="budgetBars"></div>
-              </div>
-              <div class="budget-chart-section">
-                <h3>Budget Distribution</h3>
-                <div class="chart-container">
-                  <canvas id="budgetChart"></canvas>
-                </div>
-                <div id="budgetLegend" class="chart-legend"></div>
-              </div>
+        <div id="budgetContent">
+          <!-- Overview Cards -->
+          <div class="budget-overview-grid" id="budgetOverview"></div>
+
+          <div id="budgetModeBadge" style="display:none;margin-bottom:16px;"></div>
+
+          <!-- Budget Breakdown & Chart Layout -->
+          <div class="budget-layout-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;margin-bottom:32px;">
+            <div class="card" style="padding:24px;">
+              <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;"><i data-lucide="sliders"></i> Allocated Category Allowances</h3>
+              <div id="budgetBars"></div>
             </div>
-            <div class="budget-tips" id="budgetTips"></div>
+            <div class="card" style="padding:24px;display:flex;flex-direction:column;align-items:center;">
+              <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;width:100%;"><i data-lucide="pie-chart"></i> Spending Proportion</h3>
+              <div style="position:relative;width:240px;height:240px;">
+                <canvas id="budgetChart"></canvas>
+              </div>
+              <div id="budgetLegend" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;"></div>
+            </div>
           </div>
+
+          <!-- Actual Expense Tracker Table -->
+          <div class="card" style="padding:24px;margin-bottom:32px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div>
+                <h3 style="font-size:16px;font-weight:700;"><i data-lucide="receipt"></i> Actual Expense Register</h3>
+                <span style="font-size:12px;color:var(--gray-500);">Keep all vendor payments and incidental receipts organized</span>
+              </div>
+              <button class="btn-primary-sm" onclick="openExpenseModal()">+ Add Expense</button>
+            </div>
+            <div class="data-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Title &amp; Notes</th>
+                    <th>Category</th>
+                    <th>Vendor</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="expenseTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Smart Saving Tips -->
+          <div id="budgetTips" class="card" style="padding:24px;"></div>
         </div>
       </section>
 
-      <!-- ===================== TIMELINE PAGE ===================== -->
-      <section class="page" id="page-timeline">
-        <div class="page-header">
-          <h1><i data-lucide="clock"></i> Event Timeline</h1>
-          <p>Track every milestone from today to your big day</p>
-        </div>
-
-        <div id="timelineEmpty" class="empty-state">
-          <div class="empty-icon"><i data-lucide="clock"></i></div>
-          <h2>No Timeline Yet</h2>
-          <p>Create an event to generate your preparation timeline</p>
-          <button class="btn-primary" onclick="navigateTo('create-event')">
-            <i data-lucide="plus"></i> Create Event
-          </button>
-        </div>
-
-        <div id="timelineContent" style="display:none;">
-          <div class="timeline-header-bar" id="timelineHeaderBar"></div>
-
-          <div class="timeline-actions">
-            <button class="btn-primary" id="btnGenerateTimeline" onclick="generateEventTimeline()">
-              <i data-lucide="sparkles"></i> Generate Again
+      <!-- ==================== 6. GUEST MANAGEMENT ==================== -->
+      <section class="page" id="page-guests">
+        <div class="section-header-row" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+          <div>
+            <h1 style="font-size:24px;font-weight:800;">Guest Management &amp; RSVP Tracker</h1>
+            <p style="font-size:13px;color:var(--gray-500);">Coordinate attendees, dietary requests, plus-ones, and dining table seating</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-primary-sm" id="btnAddGuest">
+              <i data-lucide="user-plus"></i> Add Guest
             </button>
-            <div id="timelineModeBadge" class="mode-badge-wrap" style="display:none;"></div>
-          </div>
-
-          <div id="timelineLoading" class="loading-container" style="display:none;">
-            <div class="ai-loader"><div class="ai-loader-ring"></div><i data-lucide="clock" class="ai-loader-icon"></i></div>
-            <p class="loading-text">Building your preparation timeline…</p>
-          </div>
-
-          <div id="timelineResults" style="display:none;">
-            <div class="progress-overview" id="progressOverview"></div>
-            <div class="timeline-list" id="timelineList"></div>
+            <button class="btn-outline-sm" id="btnExportGuestCsv">
+              <i data-lucide="download"></i> Export CSV
+            </button>
+            <label class="btn-outline-sm" style="cursor:pointer;margin:0;">
+              <i data-lucide="upload"></i> Import CSV
+              <input type="file" id="fileImportGuestCsv" accept=".csv" style="display:none;" />
+            </label>
           </div>
         </div>
-      </section>
 
-      <!-- ===================== VENDOR CHECKLIST PAGE ===================== -->
-      <section class="page" id="page-checklist">
-        <div class="page-header">
-          <div class="page-header-flex">
+        <!-- RSVP Stat Cards -->
+        <div class="guest-stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;">
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Total Listed</div>
+            <div style="font-size:28px;font-weight:800;color:var(--purple-600);" id="statGuestTotal">0</div>
+          </div>
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Confirmed</div>
+            <div style="font-size:28px;font-weight:800;color:#16a34a;" id="statGuestConfirmed">0</div>
+          </div>
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Pending RSVP</div>
+            <div style="font-size:28px;font-weight:800;color:#d97706;" id="statGuestPending">0</div>
+          </div>
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Declined</div>
+            <div style="font-size:28px;font-weight:800;color:#dc2626;" id="statGuestDeclined">0</div>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="table-toolbar">
+          <div class="table-toolbar-left">
+            <input type="text" id="guestSearchInput" class="table-search-input" placeholder="🔍 Search by name, phone, or email…" />
+            <select id="guestFilterRsvp" class="table-filter-select">
+              <option value="all">All RSVPs</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Invited">Invited</option>
+              <option value="Maybe">Maybe</option>
+              <option value="Declined">Declined</option>
+            </select>
+            <select id="guestFilterCategory" class="table-filter-select">
+              <option value="all">All Groups</option>
+              <option value="Family">Family</option>
+              <option value="Friends">Friends</option>
+              <option value="VIP">VIP</option>
+              <option value="Colleagues">Colleagues</option>
+              <option value="Kids">Kids</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Guests Table -->
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Guest Name</th>
+                <th>Category</th>
+                <th>RSVP Status</th>
+                <th>Dietary Need</th>
+                <th>Contact</th>
+                <th>Table</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="guestTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Seating & Table Organization -->
+        <div style="margin-top:40px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
             <div>
-              <h1><i data-lucide="list-checks"></i> Vendor Checklist</h1>
-              <p>Track all vendors and tasks for your event</p>
+              <h2 style="font-size:18px;font-weight:800;"><i data-lucide="layout-grid"></i> Seating &amp; Table Planner</h2>
+              <span style="font-size:12px;color:var(--gray-500);">Assign confirmed guests to specific tables and track capacities</span>
             </div>
-            <div class="checklist-top-actions">
-              <button class="btn-primary-sm" id="btnRegenChecklist" onclick="generateChecklistFromAI()">
-                <i data-lucide="sparkles"></i> Regenerate with AI
-              </button>
-            </div>
+            <button class="btn-primary-sm" onclick="Guests.openAddTableModal()">+ Create Table</button>
           </div>
-        </div>
-
-        <div id="checklistEmpty" class="empty-state">
-          <div class="empty-icon"><i data-lucide="list-checks"></i></div>
-          <h2>No Checklist Yet</h2>
-          <p>Create an event to start tracking your vendors and tasks</p>
-          <button class="btn-primary" onclick="navigateTo('create-event')">
-            <i data-lucide="plus"></i> Create Event
-          </button>
-        </div>
-
-        <div id="checklistContent" style="display:none;">
-          <div class="checklist-header-row">
-            <div class="checklist-stats" id="checklistStats"></div>
-            <div id="checklistModeBadge" class="mode-badge-wrap" style="display:none;"></div>
-          </div>
-
-          <div class="checklist-add-task">
-            <div class="add-task-form">
-              <select id="newTaskCategory" class="form-input-sm">
-                <option value="Venue">Venue</option>
-                <option value="Catering">Catering</option>
-                <option value="Photography">Photography</option>
-                <option value="Decoration">Decoration</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Transportation">Transportation</option>
-                <option value="Invitations">Invitations</option>
-                <option value="Custom">Custom</option>
-              </select>
-              <input type="text" id="newTaskText" class="form-input-sm" placeholder="Add a custom task…" maxlength="100" />
-              <button class="btn-primary-sm" onclick="addCustomTask()">
-                <i data-lucide="plus"></i> Add Task
-              </button>
-            </div>
-          </div>
-
-          <div id="checklistCategories"></div>
+          <div class="seating-grid" id="seatingTablesContainer"></div>
         </div>
       </section>
 
-      <!-- ===================== THEME GENERATOR PAGE ===================== -->
-      <section class="page" id="page-theme-generator">
-        <div class="page-header">
-          <h1><i data-lucide="wand-2"></i> AI Theme Generator</h1>
-          <p>Discover creative themes and ideas for your celebration</p>
+      <!-- ==================== 7. VENDOR MANAGEMENT ==================== -->
+      <section class="page" id="page-vendors">
+        <div class="section-header-row" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+          <div>
+            <h1 style="font-size:24px;font-weight:800;">Vendor Coordination Directory</h1>
+            <p style="font-size:13px;color:var(--gray-500);">Manage vendor contacts, compare quoted vs negotiated fees, and track booking statuses</p>
+          </div>
+          <button class="btn-primary-sm" id="btnAddVendor">
+            <i data-lucide="plus"></i> Add Vendor
+          </button>
         </div>
 
-        <div class="theme-generator-layout">
-          <div class="theme-input-card">
-            <h3>Generate Theme Ideas</h3>
-            <div class="theme-form">
-              <div class="form-group">
-                <label class="form-label">Event Type</label>
-                <select id="themeEventType" class="form-input">
-                  <option value="Wedding">💍 Wedding</option>
-                  <option value="Birthday">🎂 Birthday</option>
-                  <option value="Anniversary">❤️ Anniversary</option>
-                  <option value="Community Event">🎉 Community Event</option>
-                  <option value="Corporate Event">🏢 Corporate Event</option>
-                  <option value="Baby Shower">👶 Baby Shower</option>
-                  <option value="Graduation">🎓 Graduation Party</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Season / Time</label>
-                <select id="themeSeason" class="form-input">
-                  <option value="Any">Any Season</option>
-                  <option value="Spring">🌸 Spring</option>
-                  <option value="Summer">☀️ Summer</option>
-                  <option value="Monsoon">🌧️ Monsoon</option>
-                  <option value="Autumn">🍂 Autumn</option>
-                  <option value="Winter">❄️ Winter</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Style Preference</label>
-                <select id="themeStyle" class="form-input">
-                  <option value="Any">Any Style</option>
-                  <option value="Royal & Luxurious">👑 Royal & Luxurious</option>
-                  <option value="Boho & Rustic">🌿 Boho & Rustic</option>
-                  <option value="Modern & Minimalist">◻️ Modern & Minimalist</option>
-                  <option value="Garden & Floral">🌺 Garden & Floral</option>
-                  <option value="Vintage & Classic">🕰️ Vintage & Classic</option>
-                  <option value="Tropical & Vibrant">🌴 Tropical & Vibrant</option>
-                  <option value="Fairy Tale">🏰 Fairy Tale</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Additional Notes</label>
-                <textarea id="themeNotes" class="form-input form-textarea" rows="3"
-                  placeholder="Any specific preferences, cultural elements, or must-haves…" maxlength="200"></textarea>
-              </div>
-              <button class="btn-primary full-width" id="btnGenerateTheme" onclick="generateThemeIdeas()">
+        <!-- Vendor Stats -->
+        <div class="vendor-stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;">
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Total Vendors</div>
+            <div style="font-size:28px;font-weight:800;color:var(--purple-600);" id="statVendorTotal">0</div>
+          </div>
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Booked / Confirmed</div>
+            <div style="font-size:28px;font-weight:800;color:#16a34a;" id="statVendorBooked">0</div>
+          </div>
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Committed Cost</div>
+            <div style="font-size:28px;font-weight:800;color:var(--gray-900);" id="statVendorCommitted">₹0</div>
+          </div>
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Negotiated Savings</div>
+            <div style="font-size:28px;font-weight:800;color:#10b981;" id="statVendorSavings">₹0</div>
+          </div>
+        </div>
+
+        <!-- Filter Toolbar -->
+        <div class="table-toolbar">
+          <div class="table-toolbar-left">
+            <input type="text" id="vendorSearchInput" class="table-search-input" placeholder="🔍 Search vendor by name or contact…" />
+            <select id="vendorFilterCategory" class="table-filter-select">
+              <option value="all">All Categories</option>
+              <option value="Venue">Venue</option>
+              <option value="Catering">Catering</option>
+              <option value="Photography">Photography</option>
+              <option value="Videography">Videography</option>
+              <option value="Decoration">Decoration</option>
+              <option value="Music and DJ">Music &amp; DJ</option>
+              <option value="Transportation">Transportation</option>
+              <option value="Makeup">Makeup &amp; Hair</option>
+              <option value="Florist">Florist</option>
+              <option value="Equipment">Event Equipment</option>
+            </select>
+            <select id="vendorFilterStatus" class="table-filter-select">
+              <option value="all">All Booking Statuses</option>
+              <option value="Booked">Booked</option>
+              <option value="Shortlisted">Shortlisted</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Researching">Researching</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Vendor Table -->
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Vendor &amp; Notes</th>
+                <th>Category</th>
+                <th>Contact Person</th>
+                <th>Price (Final / Quoted)</th>
+                <th>Booking Status</th>
+                <th>Payment Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="vendorTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== 8. TIMELINE & PREPARATION ==================== -->
+      <section class="page" id="page-timeline">
+        <div class="timeline-header-row" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+          <div>
+            <h1 style="font-size:24px;font-weight:800;">Event Preparation Timeline</h1>
+            <p style="font-size:13px;color:var(--gray-500);">Chronological milestones scheduled backward from your celebration date</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-primary-sm" onclick="openAddTaskModal()">
+              <i data-lucide="plus"></i> Add Custom Task
+            </button>
+            <button class="btn-outline-sm" id="btnGenerateTimeline" onclick="generateTimeline()">
+              <i data-lucide="sparkles"></i> Regenerate Timeline
+            </button>
+          </div>
+        </div>
+
+        <div id="timelineModeBadge" style="display:none;margin-bottom:16px;"></div>
+
+        <div class="timeline-progress-card" id="timelineProgressCard" style="display:none;margin-bottom:24px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px;">
+            <span>Overall Milestone Completion</span>
+            <span id="timelinePercent">0%</span>
+          </div>
+          <div class="budget-progress-track">
+            <div class="budget-progress-fill" id="timelineProgressBar" style="width:0%;background:var(--purple-600);"></div>
+          </div>
+        </div>
+
+        <div id="timelineTasksList"></div>
+      </section>
+
+      <!-- ==================== 9. VENDOR CHECKLIST ==================== -->
+      <section class="page" id="page-checklist">
+        <div class="checklist-header-row" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+          <div>
+            <h1 style="font-size:24px;font-weight:800;">Vendor Master Checklist</h1>
+            <p style="font-size:13px;color:var(--gray-500);">Actionable vendor procurement checklist grouped by category</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-outline-sm" id="btnGenerateChecklist" onclick="generateChecklist()">
+              <i data-lucide="sparkles"></i> Regenerate Checklist
+            </button>
+          </div>
+        </div>
+
+        <div id="checklistModeBadge" style="display:none;margin-bottom:16px;"></div>
+        <div id="checklistCategories" class="checklist-grid"></div>
+      </section>
+
+      <!-- ==================== 10. THEME STUDIO ==================== -->
+      <section class="page" id="page-theme-generator">
+        <div class="page-header" style="margin-bottom:24px;">
+          <h1 style="font-size:24px;font-weight:800;">Event Theme &amp; Decor Studio</h1>
+          <p style="font-size:13px;color:var(--gray-500);">Discover aesthetic themes, color palettes, decor concepts, and signature celebration experiences</p>
+        </div>
+
+        <div class="card" style="padding:24px;margin-bottom:28px;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Event Type</label>
+              <select id="themeEventType">
+                <option value="Wedding">Wedding</option>
+                <option value="Birthday">Birthday Party</option>
+                <option value="Anniversary">Anniversary</option>
+                <option value="Community Event">Community Event / Festival</option>
+                <option value="Corporate Event">Corporate Gala</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Season</label>
+              <select id="themeSeason">
+                <option value="Any">Any Season</option>
+                <option value="Winter">Winter (Warm &amp; Rich)</option>
+                <option value="Spring">Spring (Floral &amp; Fresh)</option>
+                <option value="Summer">Summer (Bright &amp; Breezy)</option>
+                <option value="Autumn">Autumn (Earthy &amp; Golden)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Style Vibe</label>
+              <select id="themeStyle">
+                <option value="Any">Any Style</option>
+                <option value="Royal Grandeur">Royal Grandeur</option>
+                <option value="Boho Chic">Bohemian &amp; Organic</option>
+                <option value="Minimalist Modern">Minimalist Modern</option>
+                <option value="Vintage Heritage">Vintage Heritage</option>
+                <option value="Vibrant Festive">Vibrant Festive</option>
+              </select>
+            </div>
+            <div class="form-group full-width" style="text-align:right;">
+              <button class="btn-primary" id="btnGenerateTheme" onclick="generateThemeIdeas()">
                 <i data-lucide="wand-2"></i> Generate Theme Ideas
               </button>
             </div>
           </div>
+        </div>
 
-          <div class="theme-results-area">
-            <div id="themeLoading" class="loading-container" style="display:none;">
-              <div class="ai-loader"><div class="ai-loader-ring"></div><i data-lucide="wand-2" class="ai-loader-icon"></i></div>
-              <p class="loading-text">Generating creative theme ideas…</p>
+        <div id="themeLoading" style="display:none;text-align:center;padding:40px;">
+          <div class="spin-icon" style="font-size:28px;color:var(--purple-600);"><i data-lucide="loader-2"></i></div>
+          <p style="margin-top:12px;color:var(--gray-500);">Curating harmonious palettes and decor blueprints…</p>
+        </div>
+
+        <div id="themeResults"></div>
+      </section>
+
+      <!-- ==================== 11. INVITATION STUDIO ==================== -->
+      <section class="page" id="page-invitations">
+        <div class="page-header" style="margin-bottom:20px;">
+          <h1 style="font-size:24px;font-weight:800;">Invitation Studio</h1>
+          <p style="font-size:13px;color:var(--gray-500);">Customize elegant celebration cards, download high-res PNG images, and copy WhatsApp-ready invitations</p>
+        </div>
+
+        <div class="invitation-studio-layout">
+          <!-- Left Controls Panel -->
+          <div class="inv-controls-card">
+            <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;"><i data-lucide="sliders"></i> Customize Invitation</h3>
+
+            <div class="form-group" style="margin-bottom:14px;">
+              <label>Invitation Style Template</label>
+              <select id="invTemplate">
+                <option value="royal">👑 Royal Elegance (Palace &amp; Gold)</option>
+                <option value="vibrant">🎉 Vibrant Celebration (Purple &amp; Pink)</option>
+                <option value="minimal">✨ Minimalist Chic (Clean &amp; Sharp)</option>
+                <option value="garden">🌿 Botanical Garden (Sage &amp; Green)</option>
+                <option value="corporate">👔 Corporate Gala (Navy &amp; Silver)</option>
+              </select>
             </div>
-            <div id="themeResults">
-              <div class="theme-placeholder">
-                <i data-lucide="wand-2"></i>
-                <p>Your theme ideas will appear here</p>
-                <small>Select your preferences and click Generate</small>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Host Family / Organizer</label>
+              <input type="text" id="invHostNames" placeholder="e.g. Mrs. Rekha &amp; Mr. Ramesh Sharma" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Couple / Celebrant Names</label>
+              <input type="text" id="invCoupleNames" placeholder="e.g. Priya &amp; Arjun" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Invitation Subtitle</label>
+              <input type="text" id="invEventTitle" placeholder="e.g. Cordially invite you to celebrate their Royal Wedding" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Date Display Text</label>
+              <input type="text" id="invDateText" placeholder="e.g. Sunday, November 15, 2026" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Time Display Text</label>
+              <input type="text" id="invTimeText" placeholder="e.g. 10:00 AM onwards" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Venue Name</label>
+              <input type="text" id="invVenueName" placeholder="e.g. The Grand Palace" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Venue Address</label>
+              <input type="text" id="invVenueAddress" placeholder="e.g. Amer Road, Jaipur, Rajasthan" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Dress Code</label>
+              <input type="text" id="invDressCode" placeholder="e.g. Royal Festive / Traditional Attire" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>RSVP Contact Person &amp; Phone</label>
+              <input type="text" id="invRsvpContact" placeholder="e.g. +91 98765 43210 (Mr. Sharma)" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:14px;">
+              <label>RSVP By Date</label>
+              <input type="text" id="invRsvpDate" placeholder="e.g. October 25, 2026" />
+            </div>
+
+            <div class="form-group" style="display:flex;gap:10px;">
+              <div style="flex:1;">
+                <label>Primary Color</label>
+                <input type="color" id="invPrimaryColor" value="#8b0000" style="height:38px;padding:2px;" />
               </div>
+              <div style="flex:1;">
+                <label>Accent Color</label>
+                <input type="color" id="invAccentColor" value="#d4af37" style="height:38px;padding:2px;" />
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:14px;">
+              <label>Font Typography</label>
+              <select id="invFontFamily">
+                <option value="Playfair Display">Playfair Display (Serif Elegance)</option>
+                <option value="Inter">Inter (Clean Modern Sans)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Right Live Preview Area -->
+          <div class="inv-preview-area">
+            <div class="inv-preview-actions" style="display:flex;gap:10px;margin-bottom:16px;">
+              <button class="btn-primary" id="btnDownloadInvitationPng">
+                <i data-lucide="image"></i> Download Image (PNG)
+              </button>
+              <button class="btn-outline" id="btnPrintInvitation">
+                <i data-lucide="printer"></i> Print / PDF
+              </button>
+              <button class="btn-outline" id="btnCopyInvitationText">
+                <i data-lucide="copy"></i> Copy WhatsApp Text
+              </button>
+            </div>
+
+            <div class="invitation-card-preview template-royal" id="invitationCardPreview">
+              <!-- Live Card Rendered via Invitations.updatePreview() -->
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ===================== MY EVENTS PAGE ===================== -->
-      <section class="page" id="page-my-events">
-        <div class="page-header">
-          <h1><i data-lucide="folder-heart"></i> My Events</h1>
-          <p>All your saved events in one place</p>
-        </div>
+      <!-- ==================== 12. EVENT DAY COMMAND CENTER ==================== -->
+      <section class="page" id="page-event-day">
+        <div class="event-day-container">
+          <!-- Day Header -->
+          <div class="event-day-header">
+            <div>
+              <span class="badge-pill" style="background:rgba(255,255,255,0.25);color:white;margin-bottom:8px;display:inline-block;">
+                ⚡ DAY-OF COMMAND CENTER
+              </span>
+              <h1 id="eventDayTitle" style="font-size:28px;font-weight:800;margin-bottom:4px;">Celebration Day</h1>
+              <div id="eventDayMeta" style="font-size:13px;opacity:0.9;"></div>
+            </div>
+            <div id="eventDayCountdown"></div>
+          </div>
 
-        <div class="my-events-actions">
-          <button class="btn-primary" onclick="navigateTo('create-event')">
-            <i data-lucide="plus"></i> Create New Event
-          </button>
-          <button class="btn-ghost btn-danger-ghost" onclick="confirmClearAllEvents()" id="clearAllEventsBtn" style="display:none;">
-            <i data-lucide="trash-2"></i> Clear All
-          </button>
-        </div>
+          <!-- Run of Show Schedule -->
+          <div class="card" style="padding:24px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div>
+                <h3 style="font-size:16px;font-weight:700;"><i data-lucide="clock"></i> Live Run-of-Show Timeline</h3>
+                <span style="font-size:12px;color:var(--gray-500);">Hour-by-hour event schedule. Check items off as they happen.</span>
+              </div>
+              <button class="btn-primary-sm" id="btnAddScheduleItem">+ Add Milestone</button>
+            </div>
+            <div id="dayScheduleList"></div>
+          </div>
 
-        <div id="myEventsList" class="events-list"></div>
+          <!-- Speed-Dial Vendor Contacts -->
+          <div class="card" style="padding:24px;">
+            <h3 style="font-size:16px;font-weight:700;margin-bottom:6px;"><i data-lucide="phone-call"></i> Vendor Emergency Speed-Dial</h3>
+            <p style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">One-tap phone calls and direct WhatsApp messages to all booked vendors</p>
+            <div class="speed-dial-grid" id="dayVendorSpeedDial"></div>
+          </div>
+
+          <!-- Critical Day-Of Checklist & Emergency Kit -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;">
+            <div class="card" style="padding:24px;">
+              <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;"><i data-lucide="alert-circle"></i> Must-Not-Forget Items</h3>
+              <div id="dayCriticalChecklist"></div>
+            </div>
+            <div class="card" style="padding:24px;">
+              <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;"><i data-lucide="briefcase"></i> Day-Of Emergency Kit</h3>
+              <div id="dayEmergencyKit"></div>
+            </div>
+          </div>
+        </div>
       </section>
 
-    </div><!-- end page-container -->
+      <!-- ==================== 13. AI IDEA STUDIO ==================== -->
+      <section class="page" id="page-idea-generator">
+        <div class="page-header" style="margin-bottom:24px;">
+          <h1 style="font-size:24px;font-weight:800;">Celebration Idea Studio</h1>
+          <p style="font-size:13px;color:var(--gray-500);">Creative surprise concepts, sustainable eco-friendly tips, and engaging guest activities</p>
+        </div>
+
+        <div class="idea-cards-grid" id="ideaStudioCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;"></div>
+      </section>
+
+      <!-- ==================== 14. REPORTS & ANALYTICS ==================== -->
+      <section class="page" id="page-analytics">
+        <div class="section-header-row" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+          <div>
+            <h1 style="font-size:24px;font-weight:800;">Reports, Analytics &amp; Dossier</h1>
+            <p style="font-size:13px;color:var(--gray-500);">Executive variance reporting, attendance breakdowns, and exportable dossier</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-primary-sm" onclick="Analytics.generatePrintableDossier()">
+              <i data-lucide="file-text"></i> Download Event Dossier
+            </button>
+            <button class="btn-outline-sm" onclick="window.print()">
+              <i data-lucide="printer"></i> Print Summary
+            </button>
+          </div>
+        </div>
+
+        <!-- Metrics Overview -->
+        <div class="analytics-metrics-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px;">
+          <div class="card" style="padding:18px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Planned Budget</div>
+            <div style="font-size:24px;font-weight:800;color:var(--purple-600);" id="reportTotalBudget">₹0</div>
+          </div>
+          <div class="card" style="padding:18px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Actual Spent</div>
+            <div style="font-size:24px;font-weight:800;color:var(--gray-900);" id="reportTotalSpent">₹0</div>
+          </div>
+          <div class="card" style="padding:18px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Budget Variance</div>
+            <div style="font-size:24px;font-weight:800;" id="reportRemainingBudget">₹0</div>
+          </div>
+          <div class="card" style="padding:18px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Confirmed Attendance</div>
+            <div style="font-size:24px;font-weight:800;color:#16a34a;" id="reportConfirmedGuests">0</div>
+          </div>
+          <div class="card" style="padding:18px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Task Progress</div>
+            <div style="font-size:24px;font-weight:800;color:#d97706;" id="reportTaskCompletion">0%</div>
+          </div>
+          <div class="card" style="padding:18px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;">Booked Vendors</div>
+            <div style="font-size:24px;font-weight:800;color:#2563eb;" id="reportBookedVendors">0</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;">
+          <div class="card" style="padding:22px;">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;"><i data-lucide="bar-chart-2"></i> Spending by Category</h3>
+            <canvas id="reportSpendingChart" style="max-height:260px;"></canvas>
+          </div>
+          <div class="card" style="padding:22px;">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;"><i data-lucide="pie-chart"></i> Guest RSVP Breakdown</h3>
+            <canvas id="reportGuestChart" style="max-height:260px;"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 15. MY EVENTS ==================== -->
+      <section class="page" id="page-my-events">
+        <div class="section-header-row" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+          <div>
+            <h1 style="font-size:24px;font-weight:800;">My Saved Celebrations</h1>
+            <p style="font-size:13px;color:var(--gray-500);">All events created in this browser. Switch, edit, or archive them anytime.</p>
+          </div>
+          <button class="btn-primary" onclick="Wizard.startNewEvent(); navigateTo('create-event');">
+            <i data-lucide="plus"></i> Create New Event
+          </button>
+        </div>
+
+        <div class="my-events-grid" id="myEventsGrid"></div>
+      </section>
+
+      <!-- ==================== 16. SETTINGS & BACKUP ==================== -->
+      <section class="page" id="page-settings">
+        <div class="page-header" style="margin-bottom:24px;">
+          <h1 style="font-size:24px;font-weight:800;">Settings &amp; Data Management</h1>
+          <p style="font-size:13px;color:var(--gray-500);">Customize your host profile, configure local Ollama AI endpoints, and export full JSON backups</p>
+        </div>
+
+        <div class="settings-grid">
+          <!-- Profile Card -->
+          <div class="settings-card">
+            <h3><i data-lucide="user"></i> Host Profile &amp; Preferences</h3>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Host Name</label>
+              <input type="text" id="settingsUserName" placeholder="Your Name" />
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Role / Subtitle</label>
+              <input type="text" id="settingsUserTitle" placeholder="e.g. Wedding Planner, Family Host" />
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+              <label>Preferred Currency</label>
+              <select id="settingsCurrency">
+                <option value="INR">₹ INR (Indian Rupee)</option>
+                <option value="USD">$ USD (US Dollar)</option>
+                <option value="EUR">€ EUR (Euro)</option>
+                <option value="GBP">£ GBP (British Pound)</option>
+                <option value="AUD">A$ AUD (Australian Dollar)</option>
+                <option value="CAD">C$ CAD (Canadian Dollar)</option>
+              </select>
+            </div>
+            <button class="btn-primary-sm" onclick="saveGeneralSettings()">Save Profile</button>
+          </div>
+
+          <!-- Ollama AI Card -->
+          <div class="settings-card">
+            <h3><i data-lucide="cpu"></i> Local Ollama AI Endpoint</h3>
+            <p style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">Connect to your locally running open-source models with zero API keys.</p>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Ollama Host URL</label>
+              <input type="text" id="settingsOllamaHost" placeholder="http://localhost:11434" />
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn-outline-sm" onclick="testOllamaConnection(event)">Ping Connection</button>
+              <button class="btn-primary-sm" onclick="showAiModal()">Configure Models</button>
+            </div>
+          </div>
+
+          <!-- JSON Backup & Restore Card -->
+          <div class="settings-card">
+            <h3><i data-lucide="database"></i> JSON Backup &amp; Restore</h3>
+            <p style="font-size:12px;color:var(--gray-500);margin-bottom:12px;" id="settingsEventCount">All data is kept private in your browser LocalStorage.</p>
+            <div style="display:flex;gap:10px;margin-bottom:16px;">
+              <button class="btn-outline" onclick="downloadFullBackup()">
+                <i data-lucide="download"></i> Download Full Backup JSON
+              </button>
+              <label class="btn-outline" style="cursor:pointer;margin:0;">
+                <i data-lucide="upload"></i> Restore from JSON
+                <input type="file" accept=".json" onchange="handleRestoreFileUpload(event)" style="display:none;" />
+              </label>
+            </div>
+            <div style="border-top:1px solid var(--gray-200);padding-top:14px;margin-top:14px;">
+              <button class="btn-text-sm" onclick="loadDemoCelebration()">Load Sample Celebration Demo</button>
+              <button class="btn-text-sm" style="color:#ef4444;margin-left:12px;" onclick="wipeAllDataConfirm()">Wipe All Local Data</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
   </main>
 
-  <!-- Bottom Mobile Navigation -->
-  <nav class="bottom-nav">
-    <a href="#" class="bottom-nav-item active" data-page="dashboard" onclick="navigateTo('dashboard');return false;">
-      <i data-lucide="layout-dashboard"></i><span>Home</span>
-    </a>
-    <a href="#" class="bottom-nav-item" data-page="create-event" onclick="navigateTo('create-event');return false;">
-      <i data-lucide="calendar-plus"></i><span>Create</span>
-    </a>
-    <a href="#" class="bottom-nav-item" data-page="ai-planner" onclick="navigateTo('ai-planner');return false;">
-      <i data-lucide="brain-circuit"></i><span>Plan</span>
-    </a>
-    <a href="#" class="bottom-nav-item" data-page="checklist" onclick="navigateTo('checklist');return false;">
-      <i data-lucide="list-checks"></i><span>Tasks</span>
-    </a>
-    <a href="#" class="bottom-nav-item" data-page="my-events" onclick="navigateTo('my-events');return false;">
-      <i data-lucide="folder-heart"></i><span>Events</span>
-    </a>
-  </nav>
+  <!-- ==================== MODALS ==================== -->
 
-  <!-- Local AI & Ollama Settings Modal -->
-  <div class="modal-overlay" id="aiModal" style="display:none;">
+  <!-- 1. Guest Modal -->
+  <div class="modal-overlay" id="guestModal">
     <div class="modal">
       <div class="modal-header">
-        <h2><i data-lucide="cpu"></i> Local AI & Model Settings</h2>
+        <h3 id="guestModalTitle">Add Guest</h3>
+        <button class="modal-close" onclick="Guests.closeGuestModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="guestForm" onsubmit="return false;">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>Full Name *</label>
+              <input type="text" id="guestFormName" placeholder="e.g. Ramesh Sharma" required />
+            </div>
+            <div class="form-group">
+              <label>Group / Category</label>
+              <select id="guestFormCategory">
+                <option value="Family">Family</option>
+                <option value="Friends">Friends</option>
+                <option value="VIP">VIP / Dignitary</option>
+                <option value="Colleagues">Colleagues</option>
+                <option value="Kids">Kids</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>RSVP Status</label>
+              <select id="guestFormRsvp">
+                <option value="Invited">Invited</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Maybe">Maybe</option>
+                <option value="Declined">Declined</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Dietary Preference</label>
+              <select id="guestFormDiet">
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Non-Vegetarian">Non-Vegetarian</option>
+                <option value="Vegan">Vegan</option>
+                <option value="Jain">Jain / Strict Veg</option>
+                <option value="Gluten-Free">Gluten-Free</option>
+                <option value="Kids Menu">Kids Menu</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Accompanying Plus-Ones (+1, +2)</label>
+              <input type="number" id="guestFormPlusOnes" value="0" min="0" max="10" />
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" id="guestFormPhone" placeholder="+91 98765 43210" />
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="guestFormEmail" placeholder="guest@example.com" />
+            </div>
+            <div class="form-group full-width">
+              <label>Assigned Seating Table</label>
+              <select id="guestFormTable"></select>
+            </div>
+            <div class="form-group full-width">
+              <label>Special Notes &amp; Requests</label>
+              <input type="text" id="guestFormNotes" placeholder="e.g. Needs ground floor seating, allergy to nuts" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="Guests.closeGuestModal()">Cancel</button>
+        <button class="btn-primary" onclick="Guests.saveGuestFromModal()">Save Guest</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Vendor Modal -->
+  <div class="modal-overlay" id="vendorModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="vendorModalTitle">Add Vendor</h3>
+        <button class="modal-close" onclick="Vendors.closeVendorModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="vendorForm" onsubmit="return false;">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>Vendor / Company Name *</label>
+              <input type="text" id="vendorFormName" placeholder="e.g. Royal Feast Catering Co." required />
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="vendorFormCategory">
+                <option value="Venue">Venue</option>
+                <option value="Catering">Catering</option>
+                <option value="Photography">Photography</option>
+                <option value="Videography">Videography</option>
+                <option value="Decoration">Decoration</option>
+                <option value="Music and DJ">Music &amp; DJ</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Makeup">Makeup &amp; Hair</option>
+                <option value="Florist">Florist</option>
+                <option value="Equipment">Event Equipment</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Contact Person</label>
+              <input type="text" id="vendorFormContact" placeholder="e.g. Chef Harish" />
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" id="vendorFormPhone" placeholder="+91 98765 43210" />
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="vendorFormEmail" placeholder="info@vendor.com" />
+            </div>
+            <div class="form-group">
+              <label>Initial Quoted Price</label>
+              <input type="number" id="vendorFormQuoted" placeholder="e.g. 150000" min="0" />
+            </div>
+            <div class="form-group">
+              <label>Negotiated / Final Price</label>
+              <input type="number" id="vendorFormFinal" placeholder="e.g. 135000" min="0" />
+            </div>
+            <div class="form-group">
+              <label>Booking Status</label>
+              <select id="vendorFormBookingStatus">
+                <option value="Researching">Researching</option>
+                <option value="Contacted">Contacted</option>
+                <option value="Shortlisted">Shortlisted</option>
+                <option value="Booked">Booked</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Payment Status</label>
+              <select id="vendorFormPaymentStatus">
+                <option value="Pending">Pending</option>
+                <option value="Deposit Paid">Deposit Paid</option>
+                <option value="Fully Paid">Fully Paid</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label>Notes &amp; Scope of Work</label>
+              <textarea id="vendorFormNotes" rows="2" placeholder="e.g. Deposit ₹50,000 paid via UPI. Balance due day before event."></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="Vendors.closeVendorModal()">Cancel</button>
+        <button class="btn-primary" onclick="Vendors.saveVendorFromModal()">Save Vendor</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Expense Modal -->
+  <div class="modal-overlay" id="expenseModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="expenseModalTitle">Log Expense</h3>
+        <button class="modal-close" onclick="closeExpenseModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="expenseForm" onsubmit="return false;">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>Expense Title / Description *</label>
+              <input type="text" id="expenseFormTitle" placeholder="e.g. Palace Advance Deposit, Stage Lighting Retainer" required />
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="expenseFormCategory">
+                <option value="Venue">Venue</option>
+                <option value="Catering">Catering</option>
+                <option value="Decoration">Decoration</option>
+                <option value="Photography">Photography</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Invitations">Invitations</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Miscellaneous">Miscellaneous</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Linked Vendor</label>
+              <select id="expenseFormVendor"></select>
+            </div>
+            <div class="form-group">
+              <label>Amount Spent *</label>
+              <input type="number" id="expenseFormAmount" placeholder="e.g. 50000" min="1" required />
+            </div>
+            <div class="form-group">
+              <label>Payment Status</label>
+              <select id="expenseFormStatus">
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending Payment</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Expense Date</label>
+              <input type="date" id="expenseFormDate" />
+            </div>
+            <div class="form-group full-width">
+              <label>Notes / Receipt Reference</label>
+              <input type="text" id="expenseFormNotes" placeholder="e.g. Transaction ID, Cash receipt, Cheque #4029" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeExpenseModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveExpenseFromModal()">Save Expense</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Profile Modal -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3>Host Profile &amp; Preferences</h3>
+        <button class="modal-close" onclick="closeProfileModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Host Name *</label>
+          <input type="text" id="profileFormName" placeholder="Your Name" />
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Role / Subtitle</label>
+          <input type="text" id="profileFormTitle" placeholder="e.g. Event Organizer, Family Host" />
+        </div>
+        <div class="form-group">
+          <label>Currency</label>
+          <select id="profileFormCurrency">
+            <option value="INR">₹ INR (Indian Rupee)</option>
+            <option value="USD">$ USD (US Dollar)</option>
+            <option value="EUR">€ EUR (Euro)</option>
+            <option value="GBP">£ GBP (British Pound)</option>
+            <option value="AUD">A$ AUD (Australian Dollar)</option>
+            <option value="CAD">C$ CAD (Canadian Dollar)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeProfileModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveProfileModal()">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. AI Settings Modal -->
+  <div class="modal-overlay" id="aiSettingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="modal-header-icon" style="background:#f3e8ff;color:#9333ea;padding:8px;border-radius:50%;">
+            <i data-lucide="cpu"></i>
+          </div>
+          <div>
+            <h2 style="font-size:18px;font-weight:700;">Local AI &amp; Models</h2>
+            <p style="font-size:12px;color:var(--gray-500);">100% Free · Open-Source · Zero API Keys</p>
+          </div>
+        </div>
         <button class="modal-close" onclick="closeAiModal()"><i data-lucide="x"></i></button>
       </div>
       <div class="modal-body">
-        <!-- Status Card -->
-        <div class="ai-status-card" id="modalStatusCard">
-          <div class="status-indicator-lg">
-            <span class="status-dot-lg" id="modalStatusDot"></span>
-            <div>
-              <h4 id="modalStatusTitle">Checking Ollama connection…</h4>
-              <p id="modalStatusSub">http://localhost:11434</p>
-            </div>
-          </div>
-          <button class="btn-outline-sm" id="modalBtnTest" onclick="testOllamaConnection(event)">
-            <i data-lucide="refresh-cw"></i> Test Connection
-          </button>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label>Local Ollama Host</label>
+          <input type="text" id="ollamaHostInput" value="http://localhost:11434" />
         </div>
-
-        <!-- Model Selection Dropdown -->
-        <div class="form-group" style="margin-top:16px;">
-          <label class="form-label" for="ollamaModelSelect">
-            <i data-lucide="brain-circuit"></i> Local AI Model (Ollama)
-          </label>
-          <select id="ollamaModelSelect" class="form-input">
-            <option value="qwen2.5:3b">qwen2.5:3b (Recommended · 3B params)</option>
-            <option value="llama3.2:3b">llama3.2:3b (Balanced · Meta)</option>
-            <option value="gemma3:1b">gemma3:1b (Fastest · Google 1B)</option>
-            <option value="qwen2.5:7b">qwen2.5:7b (High Quality · 7B)</option>
-            <option value="llama3.2:1b">llama3.2:1b (Ultra Light · 1B)</option>
-            <option value="mistral:7b">mistral:7b (Advanced · 7B)</option>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label>Select Open-Weight Model</label>
+          <select id="ollamaModelSelect">
+            <option value="qwen2.5:3b">qwen2.5:3b (Recommended – High Quality)</option>
+            <option value="llama3.2:3b">llama3.2:3b (Meta LLaMA 3.2)</option>
+            <option value="gemma3:1b">gemma3:1b (Google Gemma 3 Lightweight)</option>
           </select>
-          <small class="form-hint">Connects to your local Ollama server. 100% private, free, and runs on your machine.</small>
         </div>
-
-        <!-- Planning Engine Preference -->
-        <div class="form-group" style="margin-top:16px;">
-          <label class="form-label"><i data-lucide="sliders"></i> Planning Engine Preference</label>
-          <div class="radio-options">
-            <label class="radio-option">
-              <input type="radio" name="planningModePref" value="auto" checked onchange="setPlanningPref(this.value)">
-              <div>
-                <strong>Auto-Detect (Recommended)</strong>
-                <span>Use Local Ollama AI when running; automatically fall back to Smart Planning Mode if offline.</span>
-              </div>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="planningModePref" value="smart-only" onchange="setPlanningPref(this.value)">
-              <div>
-                <strong>Smart Planning Mode Only</strong>
-                <span>Instant rule-based event planning. Zero AI requirements, zero memory usage, 100% offline.</span>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <!-- Setup Guide Accordion -->
         <div class="ollama-guide-card">
-          <h4><i data-lucide="help-circle"></i> Quick Ollama Setup (Free &amp; Open Source)</h4>
+          <h4><i data-lucide="help-circle"></i> Quick Setup Guide</h4>
           <ol>
-            <li>Download Ollama from <a href="https://ollama.ai" target="_blank" rel="noopener">ollama.ai</a></li>
-            <li>In your terminal, pull a model:
-              <code>ollama run qwen2.5:3b</code>
-            </li>
-            <li>To allow browser connections, launch with CORS enabled:
-              <code>OLLAMA_ORIGINS="*" ollama serve</code>
-            </li>
+            <li>Install Ollama from <a href="https://ollama.ai" target="_blank">ollama.ai</a></li>
+            <li>In terminal: <code>ollama run qwen2.5:3b</code></li>
+            <li>Run with CORS: <code>OLLAMA_ORIGINS="*" ollama serve</code></li>
           </ol>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-ghost" onclick="closeAiModal()">Close</button>
-        <button class="btn-primary" onclick="saveAiModalSettings()">
-          <i data-lucide="check"></i> Save Settings
-        </button>
+        <button class="btn-primary" onclick="saveAiModalSettings()">Save Settings</button>
       </div>
     </div>
   </div>
 
-  <!-- Confirm Modal -->
-  <div class="modal-overlay" id="confirmModal" style="display:none;">
-    <div class="modal modal-sm">
-      <div class="modal-header">
-        <h2 id="confirmTitle">Confirm Action</h2>
-        <button class="modal-close" onclick="closeConfirmModal()"><i data-lucide="x"></i></button>
-      </div>
-      <div class="modal-body">
-        <p id="confirmMessage"></p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-ghost" onclick="closeConfirmModal()">Cancel</button>
-        <button class="btn-danger" id="confirmActionBtn">Confirm</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast Notifications -->
+  <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- Scripts: Storage -> Ollama -> Fallback -> API -> Modules -> Controller -->
+  <!-- ==================== SCRIPTS ==================== -->
   <script src="js/storage.js"></script>
   <script src="js/ollama.js"></script>
   <script src="js/fallback.js"></script>
   <script src="js/api.js"></script>
   <script src="js/demo-data.js"></script>
+  <script src="js/wizard.js"></script>
+  <script src="js/copilot.js"></script>
   <script src="js/budget.js"></script>
+  <script src="js/guests.js"></script>
+  <script src="js/vendors.js"></script>
   <script src="js/timeline.js"></script>
   <script src="js/checklist.js"></script>
   <script src="js/theme-generator.js"></script>
+  <script src="js/invitations.js"></script>
+  <script src="js/event-day.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/analytics.js"></script>
   <script src="js/planner.js"></script>
   <script src="js/app.js"></script>
 </body>

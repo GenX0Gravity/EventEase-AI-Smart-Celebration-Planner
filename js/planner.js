@@ -433,11 +433,11 @@ function formatPlanAsText(plan, event) {
 
 // ─── Planner Page Loader ───────────────────────────────────────────
 function loadPlannerPage() {
-  const event = Storage.getCurrentEvent();
+  const event = Storage.getActiveEvent();
   const plannerEmpty = document.getElementById('plannerEmpty');
   const plannerContent = document.getElementById('plannerContent');
   const plannerEventInfo = document.getElementById('plannerEventInfo');
-  const planResults = document.getElementById('planResults');
+  const planResults = document.getElementById('planResults') || document.getElementById('plannerResults');
   const modelSelect = document.getElementById('plannerModelSelect');
 
   if (modelSelect) {
@@ -446,33 +446,42 @@ function loadPlannerPage() {
   }
 
   if (!event) {
-    plannerEmpty.style.display = 'block';
-    plannerContent.style.display = 'none';
+    if (plannerEmpty) plannerEmpty.style.display = 'block';
+    if (plannerContent) plannerContent.style.display = 'none';
     return;
   }
 
-  plannerEmpty.style.display = 'none';
-  plannerContent.style.display = 'block';
+  if (plannerEmpty) plannerEmpty.style.display = 'none';
+  if (plannerContent) plannerContent.style.display = 'block';
 
-  plannerEventInfo.innerHTML = `
-    <div>
-      <div style="font-size:12px;color:#9333ea;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">${event.type}</div>
-      <div style="font-size:18px;font-weight:800;color:#111827;">${event.name}</div>
-      <div style="font-size:13px;color:#6b7280;margin-top:4px;">${event.location} • ${formatDate(event.date)} • ${event.guests} guests</div>
-    </div>
-    <div style="text-align:right;">
-      <div style="font-size:12px;color:#6b7280;">Total Budget</div>
-      <div style="font-size:22px;font-weight:800;color:#111827;">₹${Number(event.budget).toLocaleString('en-IN')}</div>
-    </div>
-  `;
+  if (plannerEventInfo) {
+    plannerEventInfo.innerHTML = `
+      <div>
+        <div style="font-size:12px;color:#9333ea;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">${event.type}</div>
+        <div style="font-size:18px;font-weight:800;color:var(--gray-900);">${event.name}</div>
+        <div style="font-size:13px;color:var(--gray-500);margin-top:4px;">${event.location} • ${event.date} • ${event.guests} guests</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:12px;color:var(--gray-500);">Total Budget</div>
+        <div style="font-size:22px;font-weight:800;color:var(--gray-900);">${Storage.formatMoney(event.budget)}</div>
+      </div>
+    `;
+  }
 
   // Load saved plan if exists
   const savedPlan = Storage.getPlan(event.id);
   if (savedPlan) {
     renderEventPlan(savedPlan, event);
-    planResults.style.display = 'block';
+    if (planResults) planResults.style.display = 'block';
   } else {
-    planResults.style.display = 'none';
+    if (event.id && event.id.startsWith('demo_')) {
+      const p = SmartPlanner.generatePlan(event);
+      Storage.savePlan(event.id, p);
+      renderEventPlan(p, event);
+      if (planResults) planResults.style.display = 'block';
+    } else {
+      if (planResults) planResults.style.display = 'none';
+    }
   }
 }
 

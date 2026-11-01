@@ -3,7 +3,7 @@
  */
 
 async function generateEventTimeline() {
-  const event = Storage.getCurrentEvent();
+  const event = Storage.getActiveEvent();
   if (!event) {
     showToast('Please create an event first', 'error');
     navigateTo('create-event');
@@ -14,8 +14,8 @@ async function generateEventTimeline() {
   const resultsEl = document.getElementById('timelineResults');
   const btn = document.getElementById('btnGenerateTimeline');
 
-  loadingEl.style.display = 'block';
-  resultsEl.style.display = 'none';
+  if (loadingEl) loadingEl.style.display = 'block';
+  if (resultsEl) resultsEl.style.display = 'none';
   if (btn) {
     btn.disabled = true;
     btn.innerHTML = `<i data-lucide="loader-2" class="spin-icon"></i> Building…`;
@@ -42,8 +42,8 @@ async function generateEventTimeline() {
 
     renderTimeline(tasks, event, timelineData._source, timelineData._model);
 
-    loadingEl.style.display = 'none';
-    resultsEl.style.display = 'block';
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (resultsEl) resultsEl.style.display = 'block';
 
     if (timelineData._source === 'ollama') {
       showToast(`Timeline generated via Local AI (${timelineData._model || 'Ollama'})! ⏰`, 'success');
@@ -59,22 +59,30 @@ async function generateEventTimeline() {
       completedIds: [],
     });
     renderTimeline(fallback.tasks, event, 'smart', null);
-    loadingEl.style.display = 'none';
-    resultsEl.style.display = 'block';
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (resultsEl) resultsEl.style.display = 'block';
     showToast('Timeline scheduled using Smart Planning Mode! ⏰', 'info');
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = `<i data-lucide="sparkles"></i> Generate Again`;
+      btn.innerHTML = `<i data-lucide="sparkles"></i> Regenerate Timeline`;
       lucide.createIcons();
     }
   }
 }
 
+function generateTimeline() {
+  return generateEventTimeline();
+}
+
 function renderTimeline(tasks, event, source = 'smart', model = null) {
-  const listEl = document.getElementById('timelineList');
+  const listEl = document.getElementById('timelineTasksList') || document.getElementById('timelineList');
   const progressEl = document.getElementById('progressOverview');
   const badgeEl = document.getElementById('timelineModeBadge');
+  const progressCard = document.getElementById('timelineProgressCard');
+  const percentEl = document.getElementById('timelinePercent');
+  const barEl = document.getElementById('timelineProgressBar');
+
   if (!listEl) return;
 
   // Render planning mode badge
@@ -103,10 +111,16 @@ function renderTimeline(tasks, event, source = 'smart', model = null) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Progress overview
+  if (progressCard) {
+    progressCard.style.display = 'block';
+    if (percentEl) percentEl.textContent = `${pct}% (${completed}/${total} completed)`;
+    if (barEl) barEl.style.width = `${pct}%`;
+  }
+
+  // Progress overview (if exists)
   if (progressEl) {
-    const upcoming = tasks.filter((t) => !t.completed && new Date(t.dueDate) >= today).length;
-    const overdue = tasks.filter((t) => !t.completed && new Date(t.dueDate) < today).length;
+    const upcoming = tasks.filter((t) => !t.completed && new Date(t.dueDate || today) >= today).length;
+    const overdue = tasks.filter((t) => !t.completed && new Date(t.dueDate || today) < today).length;
 
     progressEl.innerHTML = `
       <div class="progress-stat">
@@ -121,61 +135,61 @@ function renderTimeline(tasks, event, source = 'smart', model = null) {
         <div class="progress-stat-num" style="color:#ef4444">${overdue}</div>
         <div class="progress-stat-label">Overdue</div>
       </div>
-      <div class="progress-bar-overall">
-        <div class="progress-bar-overall-label">
-          <span>Overall Preparation Progress</span>
-          <span>${pct}%</span>
-        </div>
-        <div class="progress-bar-overall-track">
-          <div class="progress-bar-overall-fill" style="width:0%" data-width="${pct}%"></div>
-        </div>
-      </div>
     `;
-    setTimeout(() => {
-      const fill = progressEl.querySelector('.progress-bar-overall-fill');
-      if (fill) fill.style.width = fill.dataset.width;
-    }, 100);
   }
+
+  const eventDateObj = new Date(event.date + 'T00:00:00');
 
   // Task list
   listEl.innerHTML = tasks
     .map((task) => {
-      const dueDate = new Date(task.dueDate + 'T00:00:00');
+      let dueDate;
+      if (task.dueDate) {
+        dueDate = new Date(task.dueDate + 'T00:00:00');
+      } else {
+        dueDate = new Date(eventDateObj);
+        dueDate.setDate(dueDate.getDate() - (task.daysBeforeEvent || 0));
+      }
+
       const isOverdue = !task.completed && dueDate < today;
       const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
 
       let daysBadge = '';
       if (task.completed) {
-        daysBadge = `<span class="days-badge" style="background:#f0fdf4;color:#16a34a;">✓ Completed</span>`;
+        daysBadge = `<span class="badge-pill badge-success">✓ Completed</span>`;
       } else if (isOverdue) {
-        daysBadge = `<span class="days-badge" style="background:#fef2f2;color:#dc2626;">${Math.abs(daysLeft)}d overdue</span>`;
+        daysBadge = `<span class="badge-pill badge-danger">⚠️ Overdue (${Math.abs(daysLeft)}d ago)</span>`;
       } else if (daysLeft === 0) {
-        daysBadge = `<span class="days-badge" style="background:#fef2f2;color:#dc2626;">Due Today!</span>`;
-      } else if (daysLeft <= 7) {
-        daysBadge = `<span class="days-badge" style="background:#fffbeb;color:#b45309;">In ${daysLeft}d</span>`;
+        daysBadge = `<span class="badge-pill badge-warning">Due Today!</span>`;
       } else {
-        daysBadge = `<span class="days-badge">In ${daysLeft}d</span>`;
+        daysBadge = `<span class="badge-pill badge-neutral">${daysLeft}d left</span>`;
       }
 
-      const priorityClass = `priority-${task.priority || 'medium'}`;
-      const priorityLabel = (task.priority || 'medium').charAt(0).toUpperCase() + (task.priority || 'medium').slice(1);
+      const priorityClass = {
+        high: 'badge-danger',
+        medium: 'badge-warning',
+        low: 'badge-info',
+      }[task.priority] || 'badge-neutral';
 
       return `
-      <div class="timeline-item ${task.completed ? 'completed' : ''} ${isOverdue && !task.completed ? 'overdue' : ''}" id="ti-${task.id}">
-        <div class="timeline-checkbox ${task.completed ? 'checked' : ''}" 
-             onclick="toggleTimelineTask('${task.id}')" 
-             title="${task.completed ? 'Mark incomplete' : 'Mark complete'}">
-        </div>
-        <div class="timeline-info">
-          <div class="timeline-task">${task.task}</div>
-          <div class="timeline-date">
-            <i data-lucide="calendar"></i>
-            ${formatDate(task.dueDate)}
-            ${task.description ? ` · <span style="color:#6b7280;">${task.description}</span>` : ''}
+      <div class="timeline-task-card ${task.completed ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}" id="task_${task.id}" style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:12px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:16px;">
+        <label class="schedule-check-label">
+          <input type="checkbox" class="schedule-checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask('${task.id}')">
+          <span class="custom-check-mark"></span>
+        </label>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+            <strong style="font-size:15px;${task.completed ? 'text-decoration:line-through;color:var(--gray-400);' : ''}">${escapeHTML(task.task)}</strong>
+            <span class="badge-category">${escapeHTML(task.category || 'General')}</span>
+            <span class="badge-pill ${priorityClass}" style="text-transform:uppercase;font-size:10px;">${task.priority || 'Normal'}</span>
+          </div>
+          ${task.description ? `<p style="font-size:12.5px;color:var(--gray-500);margin:0;">${escapeHTML(task.description)}</p>` : ''}
+          <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">
+            Target Date: <strong>${dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</strong>
+            (T - ${task.daysBeforeEvent || 0} days)
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-          <span class="timeline-priority ${priorityClass}">${priorityLabel}</span>
+        <div>
           ${daysBadge}
         </div>
       </div>
@@ -186,8 +200,8 @@ function renderTimeline(tasks, event, source = 'smart', model = null) {
   lucide.createIcons();
 }
 
-function toggleTimelineTask(taskId) {
-  const event = Storage.getCurrentEvent();
+function toggleTask(taskId) {
+  const event = Storage.getActiveEvent();
   if (!event) return;
 
   const timelineData = Storage.getTimeline(event.id);
@@ -202,55 +216,69 @@ function toggleTimelineTask(taskId) {
   Storage.saveTimeline(event.id, { ...timelineData, tasks, completedIds });
 
   renderTimeline(tasks, event, timelineData._source, timelineData._model);
-  lucide.createIcons();
-
   showToast(task.completed ? '✓ Task marked complete!' : 'Task marked incomplete', task.completed ? 'success' : 'info');
 }
 
+function openAddTaskModal() {
+  const taskName = prompt('Enter Milestone / Task Name (e.g. Schedule rehearsal dinner, Order custom cake):');
+  if (!taskName || !taskName.trim()) return;
+
+  const daysStr = prompt('How many days before the event should this be completed? (e.g. 14):', '14');
+  const days = parseInt(daysStr, 10) || 14;
+
+  const priority = prompt('Priority level (high / medium / low):', 'medium') || 'medium';
+  const category = prompt('Category (e.g. Venue, Catering, Photography, Planning):', 'Planning') || 'Planning';
+
+  const event = Storage.getActiveEvent();
+  if (!event) return;
+
+  const timeline = Storage.getTimeline(event.id) || { tasks: [] };
+  const tasks = timeline.tasks || [];
+
+  tasks.push({
+    id: 't_custom_' + Date.now(),
+    task: taskName.trim(),
+    description: 'Custom milestone added by organizer',
+    category: category.trim(),
+    priority: priority.toLowerCase(),
+    daysBeforeEvent: days,
+    completed: false,
+  });
+
+  tasks.sort((a, b) => (b.daysBeforeEvent || 0) - (a.daysBeforeEvent || 0));
+  Storage.saveTimeline(event.id, { ...timeline, tasks });
+  renderTimeline(tasks, event, timeline._source, timeline._model);
+  showToast(`Added task "${taskName.trim()}"! ⏰`, 'success');
+}
+
 function loadTimelinePage() {
-  const event = Storage.getCurrentEvent();
+  const event = Storage.getActiveEvent();
   const emptyEl = document.getElementById('timelineEmpty');
   const contentEl = document.getElementById('timelineContent');
-  const headerBar = document.getElementById('timelineHeaderBar');
   const resultsEl = document.getElementById('timelineResults');
 
   if (!event) {
-    emptyEl.style.display = 'block';
-    contentEl.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'block';
+    if (contentEl) contentEl.style.display = 'none';
     return;
   }
 
-  emptyEl.style.display = 'none';
-  contentEl.style.display = 'block';
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (contentEl) contentEl.style.display = 'block';
 
-  const eventDate = new Date(event.date + 'T00:00:00');
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const daysUntil = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
-  let badgeClass = daysUntil < 0 ? 'past' : daysUntil < 30 ? 'soon' : daysUntil < 90 ? 'near' : 'far';
-  let badgeText = daysUntil < 0 ? 'Event passed' : daysUntil === 0 ? "Today's the day! 🎉" : `${daysUntil} days to go`;
-
-  if (headerBar) {
-    headerBar.innerHTML = `
-      <div>
-        <div style="font-size:12px;color:#9333ea;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">${event.type}</div>
-        <div style="font-size:18px;font-weight:800;color:#111827;">${event.name}</div>
-        <div style="font-size:13px;color:#6b7280;margin-top:4px;">${formatDate(event.date)}</div>
-      </div>
-      <div class="days-until-badge ${badgeClass}">
-        <i data-lucide="clock"></i>
-        ${badgeText}
-      </div>
-    `;
-    lucide.createIcons();
-  }
-
-  // Load saved timeline
   const savedTimeline = Storage.getTimeline(event.id);
   if (savedTimeline?.tasks?.length) {
     renderTimeline(savedTimeline.tasks, event, savedTimeline._source, savedTimeline._model);
-    resultsEl.style.display = 'block';
+    if (resultsEl) resultsEl.style.display = 'block';
   } else {
-    resultsEl.style.display = 'none';
+    // Generate initial timeline if demo event
+    if (event.id.startsWith('demo_')) {
+      const t = SmartPlanner.generateEventTimeline(event);
+      Storage.saveTimeline(event.id, t);
+      renderTimeline(t.tasks, event, 'smart', null);
+      if (resultsEl) resultsEl.style.display = 'block';
+    } else {
+      if (resultsEl) resultsEl.style.display = 'none';
+    }
   }
 }

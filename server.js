@@ -76,3 +76,4 @@ server.listen(PORT, '127.0.0.1', () => {
   console.log(`EventEase AI server running at http://127.0.0.1:${PORT}`);
   console.log(`Open in browser: http://localhost:${PORT}`);
 });
+
