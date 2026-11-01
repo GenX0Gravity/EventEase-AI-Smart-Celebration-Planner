@@ -181,8 +181,8 @@ function renderEventPlan(plan, event) {
         <div class="plan-card-content">
           <p><strong>${plan.decorations.mainConcept}</strong></p>
           <ul>${plan.decorations.items?.map((i) => `<li>${i}</li>`).join('') || ''}</ul>
-          ${plan.decorations.floral ? `<div style="margin-top:10px;padding:10px;background:#fefce8;border-radius:8px;font-size:13px;"><strong>🌸 Florals:</strong> ${plan.decorations.floral}</div>` : ''}
-          ${plan.decorations.lighting ? `<div style="margin-top:8px;padding:10px;background:#faf5ff;border-radius:8px;font-size:13px;"><strong>💡 Lighting:</strong> ${plan.decorations.lighting}</div>` : ''}
+          ${plan.decorations.floral ? `<div class="plan-callout-floral"><strong>🌸 Florals:</strong> ${plan.decorations.floral}</div>` : ''}
+          ${plan.decorations.lighting ? `<div class="plan-callout-lighting"><strong>💡 Lighting:</strong> ${plan.decorations.lighting}</div>` : ''}
         </div>
       </div>
     `);
@@ -199,11 +199,11 @@ function renderEventPlan(plan, event) {
           <div class="plan-card-title">Food & Catering</div>
         </div>
         <div class="plan-card-content">
-          <div style="margin-bottom:8px;"><span style="background:#ede9fe;color:#7c3aed;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">${plan.catering.style}</span></div>
-          ${plan.catering.starter ? `<div style="margin-bottom:8px;"><strong style="font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;">Starters</strong><ul>${plan.catering.starter.map((d) => `<li>${d}</li>`).join('')}</ul></div>` : ''}
-          ${plan.catering.main ? `<div style="margin-bottom:8px;"><strong style="font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;">Main Course</strong><ul>${plan.catering.main.map((d) => `<li>${d}</li>`).join('')}</ul></div>` : ''}
-          ${plan.catering.dessert ? `<div style="margin-bottom:8px;"><strong style="font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;">Desserts</strong><ul>${plan.catering.dessert.map((d) => `<li>${d}</li>`).join('')}</ul></div>` : ''}
-          ${plan.catering.specialNote ? `<div style="margin-top:10px;padding:10px;background:#f0fdf4;border-radius:8px;font-size:13px;"><strong>✨ Tip:</strong> ${plan.catering.specialNote}</div>` : ''}
+          <div style="margin-bottom:8px;"><span class="badge-category">${plan.catering.style}</span></div>
+          ${plan.catering.starter ? `<div style="margin-bottom:8px;"><strong style="font-size:12px;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;">Starters</strong><ul>${plan.catering.starter.map((d) => `<li>${d}</li>`).join('')}</ul></div>` : ''}
+          ${plan.catering.main ? `<div style="margin-bottom:8px;"><strong style="font-size:12px;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;">Main Course</strong><ul>${plan.catering.main.map((d) => `<li>${d}</li>`).join('')}</ul></div>` : ''}
+          ${plan.catering.dessert ? `<div style="margin-bottom:8px;"><strong style="font-size:12px;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;">Desserts</strong><ul>${plan.catering.dessert.map((d) => `<li>${d}</li>`).join('')}</ul></div>` : ''}
+          ${plan.catering.specialNote ? `<div class="plan-callout-tip"><strong>✨ Tip:</strong> ${plan.catering.specialNote}</div>` : ''}
         </div>
       </div>
     `);
@@ -222,9 +222,9 @@ function renderEventPlan(plan, event) {
         <div class="plan-card-content">
           <p><strong>🎭 Main Act:</strong> ${plan.entertainment.mainAct}</p>
           <ul>${plan.entertainment.activities?.map((a) => `<li>${a}</li>`).join('') || ''}</ul>
-          ${plan.entertainment.music ? `<div style="margin-top:10px;padding:10px;background:#f0fdf4;border-radius:8px;font-size:13px;"><strong>🎵 Music:</strong> ${plan.entertainment.music}</div>` : ''}
-          ${plan.entertainment.photography ? `<div style="margin-top:8px;padding:10px;background:#eff6ff;border-radius:8px;font-size:13px;"><strong>📸 Photography:</strong> ${plan.entertainment.photography}</div>` : ''}
-          ${plan.entertainment.specialMoments ? `<div style="margin-top:10px;"><strong style="font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;">Special Moments</strong><ul>${plan.entertainment.specialMoments.map((m) => `<li>⭐ ${m}</li>`).join('')}</ul></div>` : ''}
+          ${plan.entertainment.music ? `<div class="plan-callout-music"><strong>🎵 Music:</strong> ${plan.entertainment.music}</div>` : ''}
+          ${plan.entertainment.photography ? `<div class="plan-callout-photo"><strong>📸 Photography:</strong> ${plan.entertainment.photography}</div>` : ''}
+          ${plan.entertainment.specialMoments ? `<div style="margin-top:10px;"><strong style="font-size:12px;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;">Special Moments</strong><ul>${plan.entertainment.specialMoments.map((m) => `<li>⭐ ${m}</li>`).join('')}</ul></div>` : ''}
         </div>
       </div>
     `);
@@ -256,7 +256,7 @@ function renderEventPlan(plan, event) {
   // 7. Personalized Tips card
   if (plan.personalizedTips) {
     cards.push(`
-      <div class="plan-card full-width" style="background:linear-gradient(135deg,#faf5ff,#fdf2f8);border:1px solid #e9d5ff;">
+      <div class="plan-card full-width plan-card-tips">
         <div class="plan-card-header">
           <div class="plan-card-icon" style="background:${planColors[6]}">
             <i data-lucide="lightbulb"></i>

@@ -274,11 +274,15 @@ if (typeof window !== 'undefined' && typeof window.addEventListener === 'functio
 }
 
 function loadDemoCelebration() {
-  seedDemoCelebration();
-  updateTopbarEventSelector();
-  updateProfileUI();
-  navigateTo('dashboard');
-  showToast('Loaded sample celebration demo! 🎉', 'success');
+  if (typeof loadCelebrationPreset === 'function') {
+    loadCelebrationPreset('wedding');
+  } else {
+    seedDemoCelebration();
+    updateTopbarEventSelector();
+    updateProfileUI();
+    navigateTo('dashboard');
+    showToast('Loaded sample celebration demo! 🎉', 'success');
+  }
 }
 window.loadDemoCelebration = loadDemoCelebration;
 window.updateEventSelector = updateTopbarEventSelector;
@@ -451,10 +455,14 @@ function renderDashboardPage() {
   const spotlightContainer = document.getElementById('dashboardSpotlightContainer');
   const metricsGrid = document.getElementById('dashboardMetricsGrid');
   const heroSection = document.getElementById('dashboardHeroSection');
+  const chartsGrid = document.querySelector('.dashboard-charts-grid');
+  const bottomGrid = document.querySelector('.dashboard-bottom-grid');
 
   if (!ev) {
     if (spotlightContainer) spotlightContainer.style.display = 'none';
     if (metricsGrid) metricsGrid.style.display = 'none';
+    if (chartsGrid) chartsGrid.style.display = 'none';
+    if (bottomGrid) bottomGrid.style.display = 'none';
     if (heroSection) heroSection.style.display = 'block';
     return;
   }
@@ -462,6 +470,8 @@ function renderDashboardPage() {
   if (heroSection) heroSection.style.display = 'none';
   if (spotlightContainer) spotlightContainer.style.display = 'block';
   if (metricsGrid) metricsGrid.style.display = 'grid';
+  if (chartsGrid) chartsGrid.style.display = 'grid';
+  if (bottomGrid) bottomGrid.style.display = 'grid';
 
   // Render Spotlight Banner
   const totalBudget = Number(ev.budget) || 0;

@@ -318,3 +318,186 @@ function seedDemoCelebration() {
 
   return ev;
 }
+
+const DEMO_BIRTHDAY_EVENT = {
+  id: 'demo_birthday_bash',
+  name: "Rohan's 25th Milestone Birthday Bash",
+  type: 'Birthday',
+  date: (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 21);
+    return d.toISOString().split('T')[0];
+  })(),
+  startTime: '19:00',
+  endTime: '01:00',
+  location: 'Skyline Terrace Lounge, Indiranagar, Bangalore',
+  venueType: 'Rooftop Lounge & Bar',
+  guests: '75',
+  adultsCount: '70',
+  childrenCount: '5',
+  vipCount: '10',
+  budget: '180000',
+  currency: 'INR',
+  flexibility: 'Moderate',
+  theme: 'Cyberpunk Neon Glow & Retro Synth',
+  colorPalette: 'Electric Violet, Neon Cyan, Midnight Black, Hot Pink',
+  style: 'Trendy Casual',
+  foodPreference: 'Gourmet Sliders, Wood-fired Pizzas & Craft Mocktails',
+  entertainment: 'Live Indie DJ, Polaroid Photo Wall, Glow Sticks & Games',
+  specialRequirements: 'Custom LED birthday neon sign "Rohan Turns 25", 3-tier dark chocolate truffle cake, designated photo corner.'
+};
+
+const DEMO_ANNIVERSARY_EVENT = {
+  id: 'demo_anniversary_gala',
+  name: "Deepak & Sunita's 25th Silver Jubilee",
+  type: 'Anniversary',
+  date: (() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 1);
+    d.setDate(10);
+    return d.toISOString().split('T')[0];
+  })(),
+  startTime: '18:30',
+  endTime: '23:30',
+  location: 'Grand Ballroom, ITC Maratha, Mumbai',
+  venueType: 'Luxury Banquet Hall',
+  guests: '120',
+  adultsCount: '105',
+  childrenCount: '15',
+  vipCount: '20',
+  budget: '450000',
+  currency: 'INR',
+  flexibility: 'Flexible',
+  theme: 'Silver Elegance & Timeless Romance',
+  colorPalette: 'Sterling Silver, Ivory White, Midnight Blue, Champagne',
+  style: 'Formal Black Tie',
+  foodPreference: 'Pan-Indian Gourmet Buffet with Continental Starters',
+  entertainment: 'Acoustic Violin & Saxophone Duo, Nostalgia Slideshow, Couple Waltz',
+  specialRequirements: '25-year journey photo exhibition walkway, champagne toast glasses for 120 guests, dedicated family dance performance.'
+};
+
+const DEMO_CORPORATE_EVENT = {
+  id: 'demo_corporate_gala',
+  name: "Apex Horizons 2026 Tech Summit & Awards Gala",
+  type: 'Community Event',
+  date: (() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 2);
+    d.setDate(5);
+    return d.toISOString().split('T')[0];
+  })(),
+  startTime: '09:00',
+  endTime: '21:00',
+  location: 'HICC Novotel Convention Center, Hyderabad',
+  venueType: 'Auditorium & Networking Lawn',
+  guests: '200',
+  adultsCount: '200',
+  childrenCount: '0',
+  vipCount: '30',
+  budget: '750000',
+  currency: 'INR',
+  flexibility: 'Strict',
+  theme: 'Digital Future & AI Frontiers',
+  colorPalette: 'Cobalt Blue, Emerald Green, Titanium Gray, Crisp White',
+  style: 'Business Formal',
+  foodPreference: 'Continental High-Tea, Corporate Lunch Buffet & Cocktail Dinner',
+  entertainment: 'Keynote Speaker Stage, LED Wall Display, Annual Excellence Awards',
+  specialRequirements: 'High-speed 1Gbps WiFi, 4 wireless lapel mics, customized attendee badges with QR codes, press media wall.'
+};
+
+function loadCelebrationPreset(presetKey = 'wedding') {
+  let targetEvent = DEMO_EVENT;
+  if (presetKey === 'birthday') targetEvent = DEMO_BIRTHDAY_EVENT;
+  else if (presetKey === 'anniversary') targetEvent = DEMO_ANNIVERSARY_EVENT;
+  else if (presetKey === 'corporate') targetEvent = DEMO_CORPORATE_EVENT;
+
+  if (presetKey === 'wedding') {
+    const ev = seedDemoCelebration();
+    Storage.setActiveEventId(ev.id);
+  } else {
+    const ev = Storage.saveEvent(targetEvent);
+    Storage.setActiveEventId(ev.id);
+
+    // Generate plans using SmartPlanner
+    if (typeof SmartPlanner !== 'undefined') {
+      const plan = SmartPlanner.generateEventPlan(ev);
+      const budget = SmartPlanner.generateBudgetBreakdown(ev);
+      const timeline = SmartPlanner.generateTimeline ? SmartPlanner.generateTimeline(ev) : { tasks: [] };
+      const checklist = SmartPlanner.generateChecklist ? SmartPlanner.generateChecklist(ev) : [];
+
+      Storage.savePlan(ev.id, plan);
+      Storage.saveBudget(ev.id, budget);
+      Storage.saveTimeline(ev.id, timeline);
+      Storage.saveChecklist(ev.id, checklist);
+    }
+
+    // Populate customized demo guests
+    const sampleGuests = [
+      { id: 'g_p1', name: 'Aarav Malhotra', category: 'VIP', rsvp: 'Confirmed', diet: 'Non-Vegetarian', phone: '+91 98100 11223', email: 'aarav@example.com', plusOnes: 1, table: 'Table 1 - VIP', notes: 'Key attendee' },
+      { id: 'g_p2', name: 'Simran Kaur', category: 'Friends', rsvp: 'Confirmed', diet: 'Vegetarian', phone: '+91 98200 44556', email: 'simran@example.com', plusOnes: 0, table: 'Table 2 - Friends', notes: 'Arriving early' },
+      { id: 'g_p3', name: 'Vikram Joshi', category: 'Colleagues', rsvp: 'Invited', diet: 'Standard', phone: '+91 98300 77889', email: 'vikram@example.com', plusOnes: 1, table: '', notes: 'RSVP pending' },
+      { id: 'g_p4', name: 'Neha Sharma', category: 'Family', rsvp: 'Confirmed', diet: 'Vegan', phone: '+91 98400 33221', email: 'neha@example.com', plusOnes: 0, table: 'Table 1 - VIP', notes: 'Special vegan meal' },
+    ];
+    Storage.saveGuests(ev.id, sampleGuests);
+
+    // Populate customized demo vendors
+    const sampleVendors = [
+      { id: 'v_p1', name: ev.location, category: 'Venue', contact: 'Venue Manager', phone: '+91 98900 11223', email: 'manager@venue.com', quotedPrice: Math.round(ev.budget * 0.35), finalPrice: Math.round(ev.budget * 0.32), bookingStatus: 'Booked', paymentStatus: 'Deposit Paid', notes: 'Main space confirmed' },
+      { id: 'v_p2', name: 'Gourmet Catering Co.', category: 'Catering', contact: 'Executive Chef', phone: '+91 98700 33445', email: 'catering@gourmet.com', quotedPrice: Math.round(ev.budget * 0.30), finalPrice: Math.round(ev.budget * 0.28), bookingStatus: 'Booked', paymentStatus: 'Deposit Paid', notes: 'Buffet & drinks' },
+      { id: 'v_p3', name: 'Starlight Audio & DJ', category: 'Music and DJ', contact: 'DJ Crew', phone: '+91 98600 55667', email: 'dj@starlight.com', quotedPrice: Math.round(ev.budget * 0.12), finalPrice: Math.round(ev.budget * 0.10), bookingStatus: 'Booked', paymentStatus: 'Fully Paid', notes: 'Sound & lighting package' },
+    ];
+    Storage.saveVendors(ev.id, sampleVendors);
+
+    // Populate customized demo expenses
+    const sampleExpenses = [
+      { id: 'e_p1', title: 'Venue Booking Advance', category: 'Venue', vendor: ev.location, amount: Math.round(ev.budget * 0.15), status: 'Paid', date: ev.date, notes: 'Initial token deposit' },
+      { id: 'e_p2', title: 'Catering Tasting Retainer', category: 'Catering', vendor: 'Gourmet Catering Co.', amount: Math.round(ev.budget * 0.10), status: 'Paid', date: ev.date, notes: 'Advance payment' },
+      { id: 'e_p3', title: 'DJ & Sound System Deposit', category: 'Entertainment', vendor: 'Starlight Audio & DJ', amount: Math.round(ev.budget * 0.08), status: 'Paid', date: ev.date, notes: 'Paid in full' },
+    ];
+    Storage.saveExpenses(ev.id, sampleExpenses);
+
+    // Populate day schedule
+    Storage.saveDaySchedule(ev.id, [
+      { id: 's_p1', time: ev.startTime || '18:00', title: 'Event Kickoff & Guest Reception', description: 'Welcome beverages and initial registration', completed: false, responsible: 'Lead Host' },
+      { id: 's_p2', time: '20:00', title: 'Main Program & Dinner Service', description: 'Keynotes, presentations, and dinner counters open', completed: false, responsible: 'Catering Lead' },
+      { id: 's_p3', time: ev.endTime || '23:00', title: 'Celebration Finale & Wrap-up', description: 'Closing dance, send-offs, and venue sign-off', completed: false, responsible: 'Event Coordinator' },
+    ]);
+
+    // Populate seating tables
+    Storage.saveSeatingTables(ev.id, [
+      { id: 'tbl_p1', name: 'Table 1 - VIP', capacity: 10 },
+      { id: 'tbl_p2', name: 'Table 2 - Friends', capacity: 8 },
+      { id: 'tbl_p3', name: 'Table 3 - General', capacity: 8 },
+    ]);
+
+    // Populate invitation
+    Storage.saveInvitation(ev.id, {
+      template: presetKey === 'corporate' ? 'corporate' : (presetKey === 'birthday' ? 'vibrant' : 'minimal'),
+      hostNames: 'Celebration Committee',
+      coupleNames: ev.name,
+      eventTitle: `Cordially invite you to celebrate`,
+      dateText: ev.date,
+      timeText: `${ev.startTime} onwards`,
+      venueName: ev.location,
+      venueAddress: ev.location,
+      dressCode: ev.style || 'Celebration Chic',
+      rsvpContact: '+91 98765 43210',
+      rsvpDate: '10 days before event',
+      primaryColor: presetKey === 'corporate' ? '#172554' : '#7c3aed',
+      accentColor: presetKey === 'corporate' ? '#0ea5e9' : '#ec4899',
+      fontFamily: 'Inter',
+    });
+  }
+
+  if (typeof updateTopbarEventSelector === 'function') updateTopbarEventSelector();
+  if (typeof updateProfileUI === 'function') updateProfileUI();
+  if (typeof navigateTo === 'function') navigateTo('dashboard');
+  if (typeof showToast === 'function') showToast(`Loaded "${targetEvent.name}" celebration! 🎉`, 'success');
+
+  return targetEvent;
+}
+
+window.seedDemoCelebration = seedDemoCelebration;
+window.loadCelebrationPreset = loadCelebrationPreset;
+window.loadDemoCelebration = () => loadCelebrationPreset('wedding');
+
